@@ -105,3 +105,14 @@ deploy:
   type: git
   repo: git@github.com:vickkkyz/vickkkyz.github.io.git
   branch: master # 注意自己创建的分支,自己起的名字
+
+# 只需要在需要加密的文章的头文件中加入：password: xxx 的字段即可，或者使用统一标签密码，给需要加密的文章加上上面配置的文件标签：Private 等；
+encrypt: # hexo-blog-encrypt
+  abstract: 不给看不给看🍭，正在耕耘中......🎉
+  message: 当前文章暂不对外可见，请输入密码后查看！
+  tags:
+  - {name: Private, password: xiaoding}
+  theme: shrink # 旧版使用的是 template 让用户自定义主题，效果不好，具体主题可查看：
+  # https://github.com/D0n9X1n/hexo-blog-encrypt/blob/master/ReadMe.zh.md#%E4%BF%AE%E6%94%B9%E5%8A%A0%E5%AF%86%E6%A8%A1%E6%9D%BF
+  wrong_pass_message: 抱歉，您输入的密码错误，请检查后重新输入。
+  wrong_hash_message: 抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.
