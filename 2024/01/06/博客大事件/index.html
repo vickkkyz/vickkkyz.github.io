@@ -7,8 +7,11 @@
 
 <head>
   <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
+  <!-- 通过cdn引入霞鹭文楷字体 -->
+  <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+    onload="this.media='all'">
+  <link rel="apple-touch-icon" sizes="76x76" href="/image/beautify/favicon.ico">
+  <link rel="icon" href="/image/beautify/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -16,17 +19,17 @@
   <meta name="author" content="Vickkkyz">
   <meta name="keywords" content="">
   
-    <meta name="description" content="本文按照时间顺序，记录博客的装修进程，着重记录踩坑经验，希望能给和我遇到一样问题的小伙伴一些参考。             2024.1.6(1) 页脚添加网站运行时间需要修改主题的源代码，在网上搜索了很多类似的，都要改themes&#x2F;source下面的文件，但是我的themes文件夹下面是空的！搜索了几篇文章，发现其实有两种方式可以加载fluid主题。 方式一：">
+    <meta name="description" content="本文按照时间顺序，记录博客的装修进程，着重记录踩坑和经验，希望能给和我遇到一样问题的小伙伴一些参考。             2024.1.7(1) 恶搞浏览器网页标题在根目录&#x2F;node_modules&#x2F;hexo-theme-fluid&#x2F;source&#x2F;js这里！创建一个名为FunnyTitle.js的文件，内容如下： 1234567891011121314151617va">
 <meta property="og:type" content="article">
 <meta property="og:title" content="博客大事件">
 <meta property="og:url" content="https://vickkkyz.fun/2024/01/06/%E5%8D%9A%E5%AE%A2%E5%A4%A7%E4%BA%8B%E4%BB%B6/index.html">
 <meta property="og:site_name" content="Vickkkyz&#39;s Home">
-<meta property="og:description" content="本文按照时间顺序，记录博客的装修进程，着重记录踩坑经验，希望能给和我遇到一样问题的小伙伴一些参考。             2024.1.6(1) 页脚添加网站运行时间需要修改主题的源代码，在网上搜索了很多类似的，都要改themes&#x2F;source下面的文件，但是我的themes文件夹下面是空的！搜索了几篇文章，发现其实有两种方式可以加载fluid主题。 方式一：">
+<meta property="og:description" content="本文按照时间顺序，记录博客的装修进程，着重记录踩坑和经验，希望能给和我遇到一样问题的小伙伴一些参考。             2024.1.7(1) 恶搞浏览器网页标题在根目录&#x2F;node_modules&#x2F;hexo-theme-fluid&#x2F;source&#x2F;js这里！创建一个名为FunnyTitle.js的文件，内容如下： 1234567891011121314151617va">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://vickkkyz.fun/image/beautify/jsdelivr.png">
 <meta property="og:image" content="https://vickkkyz.fun/image/beautify/release.png">
 <meta property="article:published_time" content="2024-01-06T14:09:57.000Z">
-<meta property="article:modified_time" content="2024-01-06T17:26:08.543Z">
+<meta property="article:modified_time" content="2024-01-07T07:56:44.294Z">
 <meta property="article:author" content="Vickkkyz">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://vickkkyz.fun/image/beautify/jsdelivr.png">
@@ -67,6 +70,10 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/cloudedGlass.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
@@ -87,8 +94,11 @@
 <meta name="generator" content="Hexo 6.3.0"></head>
 
 
-<body>
+<body><!-- hexo injector body_begin start --><div id="web_bg"></div><!-- hexo injector body_begin end -->
   
+
+  <!--浏览器搞笑标题-->
+  <script type="text/javascript" src="\js\FunnyTitle.js"></script>
 
   <header>
     
@@ -181,7 +191,7 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/image/homePage/index2.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/image/homePage/paperDefault5.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.2)">
       <div class="banner-text text-center fade-in-up">
@@ -210,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.3k 字
+          1.6k 字
         
       </span>
     
@@ -221,7 +231,7 @@
         
         
         
-          11 分钟
+          14 分钟
         
       </span>
     
@@ -264,21 +274,40 @@
               <div class="markdown-body">
                 
                 <div class="note note-info">
-            <p>本文按照时间顺序，记录博客的装修进程，着重记录踩坑经验，希望能给和我遇到一样问题的小伙伴一些参考。</p>
+            <p>本文按照时间顺序，记录博客的装修进程，着重记录踩坑和经验，希望能给和我遇到一样问题的小伙伴一些参考。</p>
           </div>
 
-<h1 id="2024-1-6-1-页脚添加网站运行时间"><a href="#2024-1-6-1-页脚添加网站运行时间" class="headerlink" title="2024.1.6(1) 页脚添加网站运行时间"></a>2024.1.6(1) 页脚添加网站运行时间</h1><p>需要修改主题的源代码，在网上搜索了很多类似的，都要改themes&#x2F;source下面的文件，但是我的themes文件夹下面是空的！搜索了几篇文章，发现其实有两种方式可以加载fluid主题。</p>
+<h1 id="2024-1-7-1-恶搞浏览器网页标题"><a href="#2024-1-7-1-恶搞浏览器网页标题" class="headerlink" title="2024.1.7(1) 恶搞浏览器网页标题"></a>2024.1.7(1) 恶搞浏览器网页标题</h1><p>在<code>根目录/node_modules/hexo-theme-fluid/source/js</code>这里！创建一个名为FunnyTitle.js的文件，内容如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">var</span> <span class="hljs-title class_">OriginTitle</span> = <span class="hljs-variable language_">document</span>.<span class="hljs-property">title</span>;<br><span class="hljs-keyword">var</span> titleTime;<br><span class="hljs-variable language_">document</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;visibilitychange&#x27;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">document</span>.<span class="hljs-property">hidden</span>) &#123;<br>        $(<span class="hljs-string">&#x27;[rel=&quot;icon&quot;]&#x27;</span>).<span class="hljs-title function_">attr</span>(<span class="hljs-string">&#x27;href&#x27;</span>, <span class="hljs-string">&quot;/image/beautify/xinsuixuanzhong.png&quot;</span>);<br>        <span class="hljs-variable language_">document</span>.<span class="hljs-property">title</span> = <span class="hljs-string">&#x27;_(:з」∠)_不要走！&#x27;</span>;<br>        <span class="hljs-built_in">clearTimeout</span>(titleTime);<br>    &#125;<br>    <span class="hljs-keyword">else</span> &#123;<br>        $(<span class="hljs-string">&#x27;[rel=&quot;icon&quot;]&#x27;</span>).<span class="hljs-title function_">attr</span>(<span class="hljs-string">&#x27;href&#x27;</span>, <span class="hljs-string">&quot;/image/beautify/favicon.ico&quot;</span>);<br>        <span class="hljs-comment">//document.title = &#x27;(*/ω＼*)你来啦&#x27; + OriginTitle;</span><br>        <span class="hljs-variable language_">document</span>.<span class="hljs-property">title</span> = <span class="hljs-string">&#x27;(*/ω＼*)你来啦~~&#x27;</span>;<br>        titleTime = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>            <span class="hljs-variable language_">document</span>.<span class="hljs-property">title</span> = <span class="hljs-title class_">OriginTitle</span>;<br>        &#125;, <span class="hljs-number">2000</span>);<br>    &#125;<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>然后在<code>根目录/node_modules/hexo-theme-fluid/layout/layout.ejs</code>中引用上面的文件，具体写法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs ejs">&lt;!--写在body标签内--&gt;<br>&lt;!--浏览器搞笑标题--&gt;<br>&lt;script type=&quot;text/javascript&quot; src=&quot;\js\FunnyTitle.js&quot;&gt;&lt;/script&gt;<br></code></pre></td></tr></table></figure>
+
+<p>参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/69211731">知乎</a></p>
+<h1 id="2024-1-7-2-给网站添加「霞鹜文楷」字体"><a href="#2024-1-7-2-给网站添加「霞鹜文楷」字体" class="headerlink" title="2024.1.7(2) 给网站添加「霞鹜文楷」字体"></a>2024.1.7(2) 给网站添加「霞鹜文楷」字体</h1><ol>
+<li><p>修改这个文件<code>根目录/node_modules/hexo-theme-fluid/layout/_partials/head.ejs</code></p>
+<p>在<code>&lt; head &gt;</code>标签内添加这段代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ejs">&lt;!-- 通过cdn引入霞鹭文楷字体 --&gt;<br>&lt;link rel=&quot;stylesheet&quot; href=&quot;https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css&quot; media=&quot;print&quot; onload=&quot;this.media=&#x27;all&#x27;&quot;&gt;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>根目录/node_modules/hexo-theme-fluid/source/css</code>下面添加文件<code>custom.css</code></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">html</span>,<br><span class="hljs-selector-tag">body</span>,<br><span class="hljs-selector-class">.markdown-body</span>,<br><span class="hljs-selector-tag">p</span> &#123;<br>    <span class="hljs-attribute">font-family</span>: <span class="hljs-string">&#x27;LXGW WenKai Screen&#x27;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>_config.fluid.html</code>的<code>font</code>标签的<code>font_family</code>字段添加<code>&quot;LXGW Wenkai Screen&quot;</code></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">font:</span><br>  <span class="hljs-attr">font_size:</span> <span class="hljs-string">16px</span><br>  <span class="hljs-attr">font_family:</span> <span class="hljs-string">&quot;LXGW Wenkai Screen&quot;</span><br>  <span class="hljs-attr">letter_spacing:</span> <span class="hljs-number">0.</span><span class="hljs-string">02em</span><br>  <span class="hljs-attr">code_font_size:</span> <span class="hljs-number">85</span><span class="hljs-string">%</span><br></code></pre></td></tr></table></figure></li>
+</ol>
+<p>参考：<a target="_blank" rel="noopener" href="https://penghh.fun/2023/05/07/2023-5-7-hexo_blog_font/">彭宏豪</a></p>
+<h1 id="2024-1-6-1-页脚添加网站运行时间"><a href="#2024-1-6-1-页脚添加网站运行时间" class="headerlink" title="2024.1.6(1) 页脚添加网站运行时间"></a>2024.1.6(1) 页脚添加网站运行时间</h1><p>需要修改主题的源代码，在网上搜索了很多类似的，都要改<code>themes/source</code>下面的文件，但是我的themes文件夹下面是空的！搜索了几篇文章，发现其实有两种方式可以加载fluid主题。</p>
 <p><strong>方式一：</strong>（我采用的是这种方式）</p>
 <p>Hexo 5.0.0 版本以上，推荐通过 npm 直接安装，进入博客目录执行命令：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">npm install --save hexo-theme-fluid<br></code></pre></td></tr></table></figure>
 
-<p>然后在博客目录下创建 <code>config.fluid.yml</code>，将主题的 <a target="_blank" rel="noopener" href="https://github.com/fluid-dev/hexo-theme-fluid/blob/master/config.yml">config.yml</a> 内容复制进去。</p>
+<p>然后在博客目录下创建 <code>_config.fluid.yml</code>，将主题的 <a target="_blank" rel="noopener" href="https://github.com/fluid-dev/hexo-theme-fluid/blob/master/config.yml">config.yml</a> 内容复制进去。</p>
 <p><strong>方式二</strong>：（网上大部分采用的这个方法，所以themes下面有内容）</p>
-<p>下载 <a target="_blank" rel="noopener" href="https://github.com/fluid-dev/hexo-theme-fluid/releases">最新 release 版本</a> 解压到 Hexo 博客目录中的 themes 目录，并将解压出的文件夹重命名为 fluid。</p>
+<p>下载 <a target="_blank" rel="noopener" href="https://github.com/fluid-dev/hexo-theme-fluid/releases">最新 release 版本</a> 解压到 Hexo 博客目录中的 <code>themes</code> 目录，并将解压出的文件夹重命名为 fluid。</p>
 <p>参考：<a target="_blank" rel="noopener" href="https://emoryhuang.cn/blog/1729600336.html">https://emoryhuang.cn/blog/1729600336.html</a></p>
 <hr>
-<p>所以方式一该怎么修改源代码呢？</p>
-<p>我们并不是在themes文件，而是npm帮我们管理的，位置在<code>博客根目录/node_modules/hexo-theme-fluid/source</code></p>
+<p><strong>所以方式一该怎么修改源代码呢？</strong></p>
+<p>我们并不是在<code>themes</code>文件，而是npm帮我们管理的，位置在<code>博客根目录/node_modules/hexo-theme-fluid/source</code></p>
 <p>所以！就直接在这里改。</p>
 <p>在<code>node_modules/hexo-theme-fluid/source/js</code>下新增文件<code>duration.js</code>，内容如下：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">var</span> now = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();<br><span class="hljs-keyword">function</span> <span class="hljs-title function_">createtime</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">var</span> grt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>(<span class="hljs-string">&quot;12/24/2023 22:51:00&quot;</span>);<span class="hljs-comment">//在此处修改你的建站时间，格式：月/日/年 时:分:秒</span><br>    now.<span class="hljs-title function_">setTime</span>(now.<span class="hljs-title function_">getTime</span>() + <span class="hljs-number">250</span>);<br>    days = (now - grt) / <span class="hljs-number">1000</span> / <span class="hljs-number">60</span> / <span class="hljs-number">60</span> / <span class="hljs-number">24</span>; dnum = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(days);<br>    hours = (now - grt) / <span class="hljs-number">1000</span> / <span class="hljs-number">60</span> / <span class="hljs-number">60</span> - (<span class="hljs-number">24</span> * dnum); hnum = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(hours);<br>    <span class="hljs-keyword">if</span> (<span class="hljs-title class_">String</span>(hnum).<span class="hljs-property">length</span> == <span class="hljs-number">1</span>) &#123; hnum = <span class="hljs-string">&quot;0&quot;</span> + hnum; &#125; minutes = (now - grt) / <span class="hljs-number">1000</span> / <span class="hljs-number">60</span> - (<span class="hljs-number">24</span> * <span class="hljs-number">60</span> * dnum) - (<span class="hljs-number">60</span> * hnum);<br>    mnum = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(minutes); <span class="hljs-keyword">if</span> (<span class="hljs-title class_">String</span>(mnum).<span class="hljs-property">length</span> == <span class="hljs-number">1</span>) &#123; mnum = <span class="hljs-string">&quot;0&quot;</span> + mnum; &#125;<br>    seconds = (now - grt) / <span class="hljs-number">1000</span> - (<span class="hljs-number">24</span> * <span class="hljs-number">60</span> * <span class="hljs-number">60</span> * dnum) - (<span class="hljs-number">60</span> * <span class="hljs-number">60</span> * hnum) - (<span class="hljs-number">60</span> * mnum);<br>    snum = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">round</span>(seconds); <span class="hljs-keyword">if</span> (<span class="hljs-title class_">String</span>(snum).<span class="hljs-property">length</span> == <span class="hljs-number">1</span>) &#123; snum = <span class="hljs-string">&quot;0&quot;</span> + snum; &#125;<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;timeDate&quot;</span>).<span class="hljs-property">innerHTML</span> = <span class="hljs-string">&quot;本站已安全运行 &quot;</span> + dnum + <span class="hljs-string">&quot; 天 &quot;</span>;<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;times&quot;</span>).<span class="hljs-property">innerHTML</span> = hnum + <span class="hljs-string">&quot; 小时 &quot;</span> + mnum + <span class="hljs-string">&quot; 分 &quot;</span> + snum + <span class="hljs-string">&quot; 秒&quot;</span>;<br>&#125;<br><span class="hljs-built_in">setInterval</span>(<span class="hljs-string">&quot;createtime()&quot;</span>, <span class="hljs-number">250</span>);<br></code></pre></td></tr></table></figure>
@@ -682,7 +711,7 @@
 
 
   
-<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/xiaoxuehua.js"></script>
 
 
 
@@ -696,5 +725,5 @@
   <noscript>
     <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
-</body>
+<!-- hexo injector body_end start --><script src="/js/backgroundize.js"></script><!-- hexo injector body_end end --></body>
 </html>
