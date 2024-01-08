@@ -18,11 +18,11 @@
 
 # 用于浏览器标签的图标
 # Icon for browser tab
-favicon: /img/fluid.png
+favicon: /image/beautify/favicon.ico
 
 # 用于苹果设备的图标
 # Icon for Apple touch
-apple_touch_icon: /img/fluid.png
+apple_touch_icon: /image/beautify/favicon.ico
 
 # 浏览器标签页中的标题分隔符，效果： 文章名 - 站点名
 # Title separator in browser tab, eg: article - site
@@ -170,8 +170,8 @@ color:
 
   # 主面板背景色
   # Color of main board
-  board_color: "#fff"
-  board_color_dark: "#252d38"
+  board_color: "#ffffff80"
+  board_color_dark: "#00000080"
 
   # 文章正文字体色
   # Color of post text
@@ -225,7 +225,7 @@ color:
 # Font
 font:
   font_size: 16px
-  font_family:
+  font_family: "LXGW Wenkai Screen"
   letter_spacing: 0.02em
   code_font_size: 85%
 
@@ -245,6 +245,7 @@ custom_js:
 # The usage is the same as custom_js
 custom_css:
   # /my_custom/custom.css
+  -  /css/cloudedGlass.css
 
 # 网页访问统计
 # Analysis of website visitors
@@ -350,9 +351,9 @@ navbar:
   # 导航栏菜单，可自行增减，key 用来关联 languages/*.yml，如不存在关联则显示 key 本身的值；icon 是 css class，可以省略；增加 name 可以强制显示指定名称
   # Navigation bar menu. `key` is used to associate languages/*.yml. If there is no association, the value of `key` itself will be displayed; if `icon` is a css class, it can be omitted; adding `name` can force the display of the specified name
   menu:
-    - { key: "home", link: "/", icon: "iconfont icon-home-fill" }
-    - { key: "archive", link: "/archives/", icon: "iconfont icon-archive-fill" }
-    - { key: "category", link: "/categories/", icon: "iconfont icon-category-fill" }
+    - { key: "首页", link: "/", icon: "iconfont icon-home-fill" }
+    - { key: "时间轴", link: "/archives/", icon: "iconfont icon-archive-fill" }
+    - { key: "分类", link: "/categories/", icon: "iconfont icon-category-fill" }
     #   {
     #     key: "category",
     #     icon: "iconfont icon-category-fill"
@@ -362,8 +363,8 @@ navbar:
     #       { key: '图标用法', link: 'https://hexo.fluid-dev.com/docs/icon/' }
     #   ]
     # }
-    - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
-    - { key: "about", link: "/about/", icon: "iconfont icon-user-fill" }
+    # - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
+    - { key: "关于我", link: "/about/", icon: "iconfont icon-user-fill" }
     #- { key: "links", link: "/links/", icon: "iconfont icon-link-fill" }
 
 # 搜索功能，基于 hexo-generator-search 插件，若已安装其他搜索插件请关闭此功能，以避免生成多余的索引文件
@@ -458,6 +459,13 @@ footer:
     <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio_sdk4.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/load.js"></script>
 
+    <!-- 页脚添加网站运行时间 -->
+    <div>
+      <span id="timeDate">载入天数...</span>
+      <span id="times">载入时分秒...</span>
+      <script src="/js/duration.js"></script>
+    </div>
+    <a href="https://icp.gov.moe/?keyword=20249336" target="_blank">萌ICP备20249336号</a>
   '
 
   # 展示网站的 PV、UV 统计数
@@ -563,7 +571,7 @@ index:
 # Post Page
 #---------------------------
 post:
-  banner_img: /image/homePage/index2.jpg
+  banner_img: /image/homePage/paperDefault5.png
   banner_img_height: 70
   banner_mask_alpha: 0.2
 
