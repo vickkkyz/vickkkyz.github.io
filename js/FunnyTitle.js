@@ -3,7 +3,8 @@ var OriginTitle = document.title;
 var titleTime;
 document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
-        $('[rel="icon"]').attr('href', "/image/beautify/xinsuixuanzhong.png");
+        //$('[rel="icon"]').attr('href', "/image/beautify/xinsuixuanzhong.png");
+        $('[rel="icon"]').attr('href', "/image/beautify/favicon.ico");
         document.title = '_(:з」∠)_不要走！';
         clearTimeout(titleTime);
     }
