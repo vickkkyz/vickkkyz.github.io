@@ -222,323 +222,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2022/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E4%BA%8B%E5%8A%A1/" target="_self">
-          MySQL-事务
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E4%BA%8B%E5%8A%A1/" target="_self">
-        <div>
-          在 MySQL 中，只有InnoDB 是支持事务的。  1.什么是事务事务：一组逻辑操作单元，使数据从一种状态变换到另一种状态。这里的一组操作就是在开启事务后进行了一些增删改操作，即事务对应着一个或多个数据库操作。 事务处理的原则：保证所有事务都作为 一个工作单元 来执行，即使出现了故障，都不能改变这种执行方式。当在一个事务中执行多个操作时，要么所有的事务都被提交( commit )，那么这些修改
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-07 09:03" pubdate>
-              2022-04-07
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Linux/">#Linux</a>
-            
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/">#数据库高级</a>
-            
-              <a href="/tags/%E4%BA%8B%E5%8A%A1/">#事务</a>
-            
-              <a href="/tags/%E6%97%A5%E5%BF%97/">#日志</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2022/03/27/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E8%8C%83%E5%BC%8F/" target="_self">
-          MySQL-范式
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/27/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E8%8C%83%E5%BC%8F/" target="_self">
-        <div>
-          在关系型数据库中，关于数据库表设计的基本原则、规范就称为范式(NF)。 目前关系型数据库有六种常见范式，按照范式级别，从低到高分别是：  第一范式（1NF） 字段不可再拆分，具有原子特性(最小粒度)  第二范式（2NF） 表中字段不存在除额外的依赖关系 比如：成绩表 （学号，课程号，成绩）关系中，（学号，课程号）可以决定成绩，但是学号不能决定成绩，课 程号也不能决定成绩，所以“（学号，课程号）→成
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-27 14:01" pubdate>
-              2022-03-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Linux/">#Linux</a>
-            
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/">#数据库高级</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2022/03/25/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E7%B4%A2%E5%BC%95/" target="_self">
-          MySQL-索引
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/25/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E7%B4%A2%E5%BC%95/" target="_self">
-        <div>
-          索引是存储引擎用于从海量数据中快速找到数据记录的一种数据结构，MySQL在进行数据查找时，首先查看查询条件是否命中某条索引，符合则通过索引查找相关数据，如果不符合则需要全表扫描。 索引是在存储引擎中实现的，因此每种存储引擎的索引实现不一定完全相同。 优点：索引可以减少磁盘I&#x2F;O的次数(把页面从磁盘加载到内存中耗时长)，加快查询速率。 缺点：创建索引和维护索引需要耗费时间，并且索引需要占用
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-25 10:48" pubdate>
-              2022-03-25
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Linux/">#Linux</a>
-            
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/">#数据库高级</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2022/03/24/Problems/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%8A%80%E5%B7%A7/" target="_self">
-          每天一个小技巧~
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/24/Problems/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%8A%80%E5%B7%A7/" target="_self">
-        <div>
-          md文件 字体颜色  这是蓝色的字体 这是红色的字体 12&lt;font color=&#x27;blue&#x27;&gt;这是蓝色的字体&lt;/font&gt;&lt;font color=&#x27;red&#x27;&gt;这是红色的字体&lt;/font&gt;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-24 20:36" pubdate>
-              2022-03-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E6%8A%80%E5%B7%A7/" class="category-chain-item">技巧</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%8A%80%E5%B7%A7/">#技巧</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2022/03/24/Problems/hexoProblem/" target="_self">
-          小问题
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/24/Problems/hexoProblem/" target="_self">
-        <div>
-          使用hexo d上传文章时遇到这个问题  解决办法：出现这个原因是因为网络不稳定，简称网速不好，换成手机热点就好了。这个问题坑了我整整两天！！
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-24 20:36" pubdate>
-              2022-03-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/hexo/" class="category-chain-item">hexo</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E9%97%AE%E9%A2%98/">#问题</a>
-            
-              <a href="/tags/hexo/">#hexo</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
         <a href="/2022/03/24/Problems/excel/" target="_self">
           解析excel表到数据库
         </a>
@@ -850,11 +533,334 @@
     </article>
   </div>
 
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/LeetCoode/%E5%8F%8C%E6%8C%87%E9%92%88/" target="_self">
+          双指针
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/LeetCoode/%E5%8F%8C%E6%8C%87%E9%92%88/" target="_self">
+        <div>
+          删除有序数组中的重复项https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/  26   难度：easy  给你一个有序数组 nums ，请你 原地 删除重复出现的元素，使每个元素 只出现一次 ，返回删除后数组的新长度。 不要使用额外的数组空间，你必须在 原地 修改输入数组 并在使用 O(1) 额外空间的条件下完
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-24 20:35" pubdate>
+              2022-03-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DateStructure/" class="category-chain-item">DateStructure</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
+            
+              <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/">#双指针</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/LeetCoode/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" target="_self">
+          排序算法
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/LeetCoode/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" target="_self">
+        <div>
+          以下排序算法均按升序处理。 1.冒泡排序算法原理：依次比较两个数的大小，如果左边的数大于右边的数，就交换两者的位置，当第一轮交换结束后，最后一个数肯定是整个数组中最大的那个数，因此下一轮比较的时候这个数就不需要比较了。 优化：按照上面的写有一个弊端，当数组初始状态就是部分或者完全升序，还是需要全部比较，这耗费很多时间，因此可以标记哪个位置以后是完全有序，就比较这个位置之前的位置就可以了。 冒泡排
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-24 20:34" pubdate>
+              2022-03-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DateStructure/" class="category-chain-item">DateStructure</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%80%BB%E7%BB%93/">#总结</a>
+            
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
+            
+              <a href="/tags/%E6%8E%92%E5%BA%8F/">#排序</a>
+            
+              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/LeetCoode/%E5%89%91%E6%8C%87offer/" target="_self">
+          剑指offer
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/LeetCoode/%E5%89%91%E6%8C%87offer/" target="_self">
+        <div>
+          数组与矩阵 数组中重复的数字找出数组中重复的数字。 在一个长度为 n的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。 示例 1： 输入：[2, 3, 1, 0, 2, 5, 3]输出：2 或 3  思路：  暴力双层for循环，时间复杂度是O(n²) 原地交换值。题目中说在一个长
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-24 20:34" pubdate>
+              2022-03-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/DateStructure/" class="category-chain-item">DateStructure</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
+            
+              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/03/24/Java/JVM/2.java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E5%BC%82%E5%B8%B8/%E7%AC%AC%E4%BA%8C%E7%AB%A0/" target="_self">
+          JVM-运行时数据区域
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/24/Java/JVM/2.java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E5%BC%82%E5%B8%B8/%E7%AC%AC%E4%BA%8C%E7%AB%A0/" target="_self">
+        <div>
+          1.运行时数据区域java虚拟机在执行java程序的过程中会把它所管理的内存划分为若干不同的数据区域。 这些数据区域包括：  程序计数器 虚拟机栈 本地方法栈 堆 方法区     1.1 程序计数器程序计数器是一块较小的内存空间，是当前线程所执行的字节码的行号指示器。在java虚拟机的概念模型（代表了所有虚拟机的统一外观）中，字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-24 20:34" pubdate>
+              2022-03-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/JVM/" class="category-chain-item">JVM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%80%BB%E7%BB%93/">#总结</a>
+            
+              <a href="/tags/java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/">#java内存区域</a>
+            
+              <a href="/tags/jvm/">#jvm</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/03/24/Java/JVM/3.%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%92%8C%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" target="_self">
+          JVM-垃圾收集器与内存分配策略
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/24/Java/JVM/3.%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%92%8C%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" target="_self">
+        <div>
+          1.为什么只有堆和方法区内存需要垃圾收集器进行回收对于程序计数器、虚拟机栈、本地方法栈是线程私有的，三个区域随线程而生，随线程而灭。栈中的栈帧随着方法的进入和退出有条不紊的执行着出栈和入栈的操作。每个栈帧中将要分配多少内存在编译期间就可以确定，因此这几个区域的内存分配和回收具有确定性，因此不需要编写复杂的垃圾收集算法，一个方法执行完，栈帧出栈后，即被销毁。内存就会被回收。 而堆和方法区分配的内存具
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-24 20:34" pubdate>
+              2022-03-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/JVM/" class="category-chain-item">JVM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%80%BB%E7%BB%93/">#总结</a>
+            
+              <a href="/tags/jvm/">#jvm</a>
+            
+              <a href="/tags/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/">#垃圾收集器</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

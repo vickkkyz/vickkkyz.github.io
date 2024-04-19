@@ -222,270 +222,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2022/04/18/Java/JUC/JMM/" target="_self">
-          Java多线程-java内存模型
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/18/Java/JUC/JMM/" target="_self">
-        <div>
-          1.JMMjava内存模型：JMM是一组规范，需要各个JVM的实现来遵守JMM规范，以便于开发者可以利用这些规范，更方便地开发多线程程序，如果没有这样的一个JMM内存模型来规范，那么很可能经过了不同JVM的不同规则的重排序之后，导致不同的虚拟机上运行的结果不一样，那是很大的问题。 JMM最重要的3点内容是：原子性，可见性，有序性。 jvm内存结构：堆、虚拟机栈、方法区、本地方法栈、程序计数器 ja
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-18 10:21" pubdate>
-              2022-04-18
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/JUC/" class="category-chain-item">JUC</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%80%BB%E7%BB%93/">#总结</a>
-            
-              <a href="/tags/juc/">#juc</a>
-            
-              <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">#并发编程</a>
-            
-              <a href="/tags/JMM/">#JMM</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2022/04/15/Java/JUC/CAS/" target="_self">
-          Java多线程-CAS
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/15/Java/JUC/CAS/" target="_self">
-        <div>
-          1.乐观锁&#x2F;悲观锁他们不是指具体的什么类型的锁，而是指看待并发同步的角度。 悲观锁：总是假设最坏的情况，每次拿数据都认为别人会修改数据，所以当自己进入临界区的时候要加锁，别人只能等待，直到我释放锁才能拿到锁；悲观的认为，不加锁的并发操作一定会出问题。synchronized和ReentrantLock是悲观锁的思想。 乐观锁：总是假设最好的情况，每次拿数据都认为别人不会修改数据，所以不会
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-15 14:33" pubdate>
-              2022-04-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/JUC/" class="category-chain-item">JUC</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%80%BB%E7%BB%93/">#总结</a>
-            
-              <a href="/tags/cas/">#cas</a>
-            
-              <a href="/tags/juc/">#juc</a>
-            
-              <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">#并发编程</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2022/04/14/Java/JUC/synchronized/" target="_self">
-          Java多线程-Synchronized
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/14/Java/JUC/synchronized/" target="_self">
-        <div>
-          1.Synchronized的作用Synchronized是同步、在时间上一致的意思。能够保证在同一时刻最多只有一个线程执行该段代码，以达到保证并发安全的效果。 Synchronized可以保证数据的可见性，即一个线程执行一系列操作后，另一个线程获取到正确的结果。 2.Synchronized的两个用法2.1 对象锁2.1.1 方法锁在方法签名上加锁，synchronized修饰普通方法，默认锁对
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-14 16:05" pubdate>
-              2022-04-14
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/JUC/" class="category-chain-item">JUC</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%80%BB%E7%BB%93/">#总结</a>
-            
-              <a href="/tags/juc/">#juc</a>
-            
-              <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">#并发编程</a>
-            
-              <a href="/tags/Synchronized%E5%85%B3%E9%94%AE%E5%AD%97/">#Synchronized关键字</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2022/04/10/Problems/comparator/" target="_self">
-          Comparator比较器
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/10/Problems/comparator/" target="_self">
-        <div>
-          需要重写compare(Object o1,Object o2)方法。 一般是用于java对象的排序 12345678910111213class MyComparator implements Comparator&lt;Integer&gt; &#123;    @Override    public int compare(Integer o1, Integer o2) &#123;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-10 14:20" pubdate>
-              2022-04-10
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E6%AF%94%E8%BE%83%E5%99%A8/" class="category-chain-item">比较器</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E9%97%AE%E9%A2%98/">#问题</a>
-            
-              <a href="/tags/java/">#java</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
         <a href="/2022/04/10/Java/JUC/ConcurrentHashMap/" target="_self">
           Java多线程- ConcurrentHashMap
         </a>
@@ -535,11 +271,11 @@
             
               <a href="/tags/%E6%80%BB%E7%BB%93/">#总结</a>
             
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%9B%86%E5%90%88%E7%B1%BB/">#线程安全集合类</a>
+            
               <a href="/tags/juc/">#juc</a>
             
               <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">#并发编程</a>
-            
-              <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%9B%86%E5%90%88%E7%B1%BB/">#线程安全集合类</a>
             
           </div>
         
@@ -876,11 +612,265 @@
     </article>
   </div>
 
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E4%BA%8B%E5%8A%A1/" target="_self">
+          MySQL-事务
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E4%BA%8B%E5%8A%A1/" target="_self">
+        <div>
+          在 MySQL 中，只有InnoDB 是支持事务的。  1.什么是事务事务：一组逻辑操作单元，使数据从一种状态变换到另一种状态。这里的一组操作就是在开启事务后进行了一些增删改操作，即事务对应着一个或多个数据库操作。 事务处理的原则：保证所有事务都作为 一个工作单元 来执行，即使出现了故障，都不能改变这种执行方式。当在一个事务中执行多个操作时，要么所有的事务都被提交( commit )，那么这些修改
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-04-07 09:03" pubdate>
+              2022-04-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Linux/">#Linux</a>
+            
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/">#数据库高级</a>
+            
+              <a href="/tags/%E4%BA%8B%E5%8A%A1/">#事务</a>
+            
+              <a href="/tags/%E6%97%A5%E5%BF%97/">#日志</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/03/27/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E8%8C%83%E5%BC%8F/" target="_self">
+          MySQL-范式
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/27/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E8%8C%83%E5%BC%8F/" target="_self">
+        <div>
+          在关系型数据库中，关于数据库表设计的基本原则、规范就称为范式(NF)。 目前关系型数据库有六种常见范式，按照范式级别，从低到高分别是：  第一范式（1NF） 字段不可再拆分，具有原子特性(最小粒度)  第二范式（2NF） 表中字段不存在除额外的依赖关系 比如：成绩表 （学号，课程号，成绩）关系中，（学号，课程号）可以决定成绩，但是学号不能决定成绩，课 程号也不能决定成绩，所以“（学号，课程号）→成
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-27 14:01" pubdate>
+              2022-03-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Linux/">#Linux</a>
+            
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/">#数据库高级</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/03/25/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E7%B4%A2%E5%BC%95/" target="_self">
+          MySQL-索引
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/25/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E7%B4%A2%E5%BC%95/" target="_self">
+        <div>
+          索引是存储引擎用于从海量数据中快速找到数据记录的一种数据结构，MySQL在进行数据查找时，首先查看查询条件是否命中某条索引，符合则通过索引查找相关数据，如果不符合则需要全表扫描。 索引是在存储引擎中实现的，因此每种存储引擎的索引实现不一定完全相同。 优点：索引可以减少磁盘I&#x2F;O的次数(把页面从磁盘加载到内存中耗时长)，加快查询速率。 缺点：创建索引和维护索引需要耗费时间，并且索引需要占用
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-25 10:48" pubdate>
+              2022-03-25
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Linux/">#Linux</a>
+            
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/">#数据库高级</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2022/03/24/Problems/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%8A%80%E5%B7%A7/" target="_self">
+          每天一个小技巧~
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/24/Problems/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%8A%80%E5%B7%A7/" target="_self">
+        <div>
+          md文件 字体颜色  这是蓝色的字体 这是红色的字体 12&lt;font color=&#x27;blue&#x27;&gt;这是蓝色的字体&lt;/font&gt;&lt;font color=&#x27;red&#x27;&gt;这是红色的字体&lt;/font&gt;
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-24 20:36" pubdate>
+              2022-03-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E5%B7%A7/" class="category-chain-item">技巧</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%8A%80%E5%B7%A7/">#技巧</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/2/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/#board">4</a><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><a class="extend next" rel="next" href="/page/4/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/2/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/#board">4</a><a class="page-number" href="/page/5/#board">5</a><a class="extend next" rel="next" href="/page/4/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
