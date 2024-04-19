@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 通过cdn引入霞鹭文楷字体 -->
+  <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+    onload="this.media='all'">
+  <link rel="apple-touch-icon" sizes="76x76" href="/image/beautify/favicon.ico">
+  <link rel="icon" href="/image/beautify/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Vickkkyz">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="java虚拟机不仅可以运行java程序，还可以运行其他语言编写的程序。字节码是构成平台无惯性的基石，class文件是由字节码组成的。 java虚拟机不与任何程序语言绑定，它只与“Class文件”这种特定的二进制文件格式所关联。 Class类文件的结构 Class文件是一组以字节为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在文件之中，中间没有添加任何分隔符。 Class文件中只有两种数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM-类文件结构">
+<meta property="og:url" content="https://vickkkyz.fun/2022/03/24/Java/JVM/4.%E7%B1%BB%E6%96%87%E4%BB%B6/%E7%AC%AC%E5%85%AD%E7%AB%A0/index.html">
+<meta property="og:site_name" content="Vickkkyz&#39;s Home">
+<meta property="og:description" content="java虚拟机不仅可以运行java程序，还可以运行其他语言编写的程序。字节码是构成平台无惯性的基石，class文件是由字节码组成的。 java虚拟机不与任何程序语言绑定，它只与“Class文件”这种特定的二进制文件格式所关联。 Class类文件的结构 Class文件是一组以字节为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在文件之中，中间没有添加任何分隔符。 Class文件中只有两种数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/607.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/601.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/602.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/603.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/604.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/605.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/606.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/608.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/609.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/610.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/611.png">
+<meta property="article:published_time" content="2022-03-24T12:33:59.000Z">
+<meta property="article:modified_time" content="2023-01-26T09:04:41.045Z">
+<meta property="article:author" content="Vickkkyz">
+<meta property="article:tag" content="总结">
+<meta property="article:tag" content="jvm">
+<meta property="article:tag" content="class文件">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://vickkkyz.fun/image/jvm/607.png">
+  
+  
+  
+  <title>JVM-类文件结构 - Vickkkyz&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/cloudedGlass.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vickkkyz.fun","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"🍭","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/image/beautify/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><div id="web_bg"></div><!-- hexo injector body_begin end -->
+  
+
+  <!--浏览器搞笑标题-->
+  <script type="text/javascript" src="\js\FunnyTitle.js"></script>
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>VickkkyzのBlog(*/ω＼*)</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>时间轴</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/image/homePage/paperDefault5.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="JVM-类文件结构"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-24 20:33" pubdate>
+          2022年3月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          21 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">JVM-类文件结构</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>java虚拟机不仅可以运行java程序，还可以运行其他语言编写的程序。字节码是构成平台无惯性的基石，class文件是由字节码组成的。</p>
+<p>java虚拟机不与任何程序语言绑定，它只与“Class文件”这种特定的二进制文件格式所关联。</p>
+<p><strong>Class类文件的结构</strong></p>
+<p>Class文件是一组以<strong>字节</strong>为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在文件之中，<strong>中间没有添加任何分隔符</strong>。</p>
+<p>Class文件中只有两种数据类型：</p>
+<ul>
+<li><p>无符号数</p>
+<p>是基本数据类型，u1，u2，u4，u8分别代表1个字节(8bit)，2个字节，4个字节，8个字节的无符号数，无符号数可以用来描述数字、索引引用、数量值、utf8编码构成的字符串值。</p>
+</li>
+<li><p>表</p>
+<p>由多个无符号数或者其他表作为数据项构成的复合数据类型。表的命名一般以“info”结尾。整个class文件本身也可以视作一张表。</p>
+</li>
+</ul>
+<p>Class文件格式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java">ClassFile &#123;<br>    u4             magic; <span class="hljs-comment">//Class 文件的标志</span><br>    u2             minor_version;<span class="hljs-comment">//Class 的小版本号</span><br>    u2             major_version;<span class="hljs-comment">//Class 的大版本号</span><br>    u2             constant_pool_count;<span class="hljs-comment">//常量池的数量</span><br>    cp_info        constant_pool[constant_pool_count-<span class="hljs-number">1</span>];<span class="hljs-comment">//常量池</span><br>    u2             access_flags;<span class="hljs-comment">//Class 的访问标记</span><br>    u2             this_class;<span class="hljs-comment">//当前类</span><br>    u2             super_class;<span class="hljs-comment">//父类</span><br>    u2             interfaces_count;<span class="hljs-comment">//接口</span><br>    u2             interfaces[interfaces_count];<span class="hljs-comment">//一个类可以实现多个接口</span><br>    u2             fields_count;<span class="hljs-comment">//Class 文件的字段属性</span><br>    field_info     fields[fields_count];<span class="hljs-comment">//一个类会可以有多个字段</span><br>    u2             methods_count;<span class="hljs-comment">//Class 文件的方法数量</span><br>    method_info    methods[methods_count];<span class="hljs-comment">//一个类可以有个多个方法</span><br>    u2             attributes_count;<span class="hljs-comment">//此类的属性表中的属性数</span><br>    attribute_info attributes[attributes_count];<span class="hljs-comment">//属性表集合</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>几个经常会提到的概念：</p>
+<ol>
+<li><p>全限定类名</p>
+<p>把全类名中的 . 换成 &#x2F; 即可。比如Object类的全类名为java.lang.Object，那么它的全限定类名就是java&#x2F;lang&#x2F;Object。一般会在全限定类名后面加上 ; 表示这个全限定类名的结束，避免与其他全限定类名混淆。</p>
+</li>
+<li><p>简单名称</p>
+<p>没有类型和参数修饰的方法或者字段名称，比如有一个类中的方法inc()，一个类中的字段m，他们的简单名称分别是inc，m。</p>
+</li>
+<li><p>方法和字段的描述符</p>
+<p>（1）基本数据类型和方法的返回值是基本数据类型、void、对象的描述符</p>
+<p><img src="/image/jvm/607.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>方法返回值是对象类型，则返回值的描述符是字符L加对象的全限定类名。</p>
+<p>（2）数组类型</p>
+<p>每一维度使用一个前置的 [ 字符来描述，比如一个Int型数组int[]的描述符为”[I”，引用类型的数组String[] []的描述符为 “[[Ljava.lang.Object;” </p>
+<p>（3）用描述符描述整个方法</p>
+<p>按照先参数列表、后返回值的顺序描述，void inc()的描述符就是”()V”，int index(char[] a,int b,int c,char[] d,int f)的描述符为”([CII[CI)I”</p>
+</li>
+</ol>
+<h1 id="1-魔数"><a href="#1-魔数" class="headerlink" title="1.魔数"></a>1.魔数</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">u4             magic; <br></code></pre></td></tr></table></figure>
+
+<p>class文件的头4个字节被称为<strong>魔数</strong>，它的作用是确定这个文件是否为一个能被虚拟机接收的Cass文件。其他文件比如GIF等也使用魔数来识别文件。</p>
+<p>使用魔数而不是扩展名.class来识别文件是否是Class文件的原因是：文件扩展名可以随意改动，不安全。Class文件的魔数值为0xCAFEBABE。</p>
+<h1 id="2-Class文件的版本"><a href="#2-Class文件的版本" class="headerlink" title="2.Class文件的版本"></a>2.Class文件的版本</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">u2             minor_version;<br></code></pre></td></tr></table></figure>
+
+<p>第五、六字节是次版本号，JDK1.2-JDK12，次版本号都被固定为0</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">u2             major_version;<br></code></pre></td></tr></table></figure>
+
+<p>第七、八字节是主版本号</p>
+<p>java的主版本号是从45开始的，JDK1.1之后的每个JDK大版本发布主版本号加1，比如JDK13可以生成的Class文件的主版本号为45+12&#x3D;57。高版本的JDK能向下兼容以前版本的Class文件，但不能运行以后版本的Class文件。</p>
+<h1 id="3-常量池"><a href="#3-常量池" class="headerlink" title="3.常量池"></a>3.常量池</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"> u2             constant_pool_count;<span class="hljs-comment">//常量池的数量</span><br>cp_info        constant_pool;<span class="hljs-comment">//常量池</span><br></code></pre></td></tr></table></figure>
+
+<p>常量池的容量是从1开始计数的，将第0项常量空出来是为了后面某些指向常量池的索引值的数据再特定情况下需要表达“不引用任何一常量池项目”的含义，可把索引值设置为0来表示。</p>
+<p>假如常量池的数量为22，减去第0项常量，所以常量池中有21项可用常量，索引为1~21</p>
+<p>常量池中主要存放的是：</p>
+<ul>
+<li><p><strong>字面量</strong></p>
+<p>文本字符串、final的常量值</p>
+</li>
+<li><p><strong>符号引用</strong></p>
+<p>类和接口的全限定类名</p>
+<p>字段的名称和描述符</p>
+<p>方法的名称和描述符</p>
+<p>被模块导出或者开放的包</p>
+</li>
+</ul>
+<p>下面是常量池中存放的类型。每一项常量结构中第一项都是一个u1的tag，用来标志它是下表中的哪一个结构。</p>
+<p><img src="/image/jvm/601.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p><img src="/image/jvm/602.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p><img src="/image/jvm/603.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h1 id="4-访问标志"><a href="#4-访问标志" class="headerlink" title="4.访问标志"></a>4.访问标志</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">u2             access_flags;<br></code></pre></td></tr></table></figure>
+
+<p>常量池结束后，是访问标志，用于标识一些类或者接口层次的访问信息</p>
+<p><img src="/image/jvm/604.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>access_flags的最终值等于所有为真的标志的值相与。</p>
+<h1 id="5-当前类-This-Class-索引、父类-Super-Class-索引、接口-Interfaces-索引集合"><a href="#5-当前类-This-Class-索引、父类-Super-Class-索引、接口-Interfaces-索引集合" class="headerlink" title="5.当前类(This Class)索引、父类(Super Class)索引、接口(Interfaces)索引集合"></a>5.当前类(This Class)索引、父类(Super Class)索引、接口(Interfaces)索引集合</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java">u2             this_class;<span class="hljs-comment">//当前类</span><br>u2             super_class;<span class="hljs-comment">//父类</span><br>u2             interfaces_count;<span class="hljs-comment">//接口</span><br>u2             interfaces;<span class="hljs-comment">//一个类可以实现多个接口</span><br></code></pre></td></tr></table></figure>
+
+<p>Class文件用这三项数据来确定该类型的继承关系。</p>
+<p>类索引用于确定这个类的全限定类名，虚拟机得到u2的值后，换算为十进制，到常量池中找index为这个值的那一行，这一行是一个类型为CONSTANT_Class_info的类描述常量符，通过这个类型中的index找到CONSTANT_Utf8_info类型的字符串常量，就是全限定类名。</p>
+<p>父类索引用于确定这个类的父类的全限定类名，确定操作和类索引的一样。</p>
+<p>接下来的两个字节是接口计数器，表示索引表的容量，如果该类没有实现接口，那这个值是0，后面接口的索引表就不再占用任何字节，确定操作和类索引的一样。</p>
+<h1 id="6-字段表集合"><a href="#6-字段表集合" class="headerlink" title="6.字段表集合"></a>6.字段表集合</h1><p>用于描述接口或者类中声明的变量。字段包括类级变量以及实例变量，但不包括在方法内部声明的局部变量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">u2             fields_count;<span class="hljs-comment">//Class 文件的字段的个数</span><br>field_info     fields;<span class="hljs-comment">//一个类会可以有个字段</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/jvm/605.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>access_flags字段访问标志符有这几种情况。</p>
+<p><img src="/image/jvm/606.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>name_index和descriptor_index都是对常量池的引用，需要去常量池中找，分别代表字段的简单名称和字段和方法的描述符。</p>
+<p>attributes_count: 一个字段还会拥有一些额外的属性，attributes_count 存放属性的个数；</p>
+<p>attributes_info: 存放具体属性具体内容。比如它的值是123，就存一个指向123的指针。</p>
+<h1 id="7-方法表集合"><a href="#7-方法表集合" class="headerlink" title="7.方法表集合"></a>7.方法表集合</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">u2             methods_count;<span class="hljs-comment">//Class 文件的方法的数量</span><br>method_info    methods;<span class="hljs-comment">//方法表</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/jvm/608.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>access_flags的类型有</p>
+<p><img src="/image/jvm/609.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h1 id="8-属性表集合"><a href="#8-属性表集合" class="headerlink" title="8.属性表集合"></a>8.属性表集合</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">u2             attributes_count;<span class="hljs-comment">//此类的属性表中的属性数</span><br>attribute_info attributes[attributes_count];<span class="hljs-comment">//属性表集合</span><br></code></pre></td></tr></table></figure>
+
+<p>Class文件，方法表，字段表都可以有属性表集合。</p>
+<p>属性表的结构</p>
+<p><img src="/image/jvm/610.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p><strong>Code属性</strong></p>
+<p>使用位置：<strong>方法表的属性集合中</strong></p>
+<p>java程序方法体中的代码经过javac编译器处理后，最终变为字节码指令存储在Code属性中。不过并非所有的方法表都存在这个属性，比如接口或者抽象类的方法中就不存在Code属性。</p>
+<p><img src="/image/jvm/611.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p><strong>u2       attribute_name_index</strong>是一项指向CONSTANT_Utf8_info型常量的索引，此常量值固定为“Code”，它 代表了该属性的属性名称</p>
+<p><strong>u4      attribute_length</strong>指示了属性值的长度，由于属性名称索引与属性长度一共为 6个字节，所以属性值的长度固定为整个属性表长度减去6个字节。</p>
+<p><strong>u2     max_stack</strong>代表了操作数栈（Operand Stack）深度的最大值。在方法执行的任意时刻，操作数栈都 不会超过这个深度。虚拟机运行的时候需要根据这个值来分配栈帧（Stack Frame）中的操作栈深度。</p>
+<p><strong>u2     max_locals</strong>代表了局部变量表所需的存储空间。在这里，max_locals的单位是变量槽（Slot），当局部变量表空间不足时，变量槽会被重用。</p>
+<p>java编译器根据 同时生存的最大局部变量数量和类型计算出max_locals的大小</p>
+<blockquote>
+<p>方法参数（包括实例方法中的隐藏参数“this”）、显式异常处 理程序的参数（Exception Handler Parameter，就是try-catch语句中catch块中所定义的异常）、方法体中 定义的局部变量都需要依赖局部变量表来存放。</p>
+</blockquote>
+<p><strong>u4     code_length</strong>和code用来存储Java源程序编译后生成的字节码指令。code_length代表字节码长度， code是用于存储字节码指令的一系列字节流。</p>
+<blockquote>
+<p>虽然它是一个u4类型的长度值，理论上最大值可以达 到2的32次幂，但是《Java虚拟机规范》中明确限制了一个方法不允许超过65535条字节码指令，即它 实际只使用了u2的长度，如果超过这个限制，Javac编译器就会拒绝编译。</p>
+</blockquote>
+<p><strong>u2     attributes_count</strong>表示Code的属性表的容量</p>
+<p><strong>attribute_info      attributes</strong>是Code的属性表,包括以下内容</p>
+<ul>
+<li><p>LineNumberTable属性</p>
+<p>LineNumberTable属性用于描述Java源码行号与字节码行号（字节码的偏移量）之间的对应关系。 它并不是运行时必需的属性，但默认会生成到Class文件之中</p>
+</li>
+<li><p>LocalVariableTable及LocalVariableTypeTable属性</p>
+<p>LocalVariableTable属性用于描述栈帧中局部变量表的变量与Java源码中定义的变量之间的关系，它 也不是运行时必需的属性，但默认会生成到Class文件之中</p>
+</li>
+</ul>
+<p>等等…………..书上还有很多属性，这里不一一介绍了。</p>
+<p>还有字节码指令他们的功能和种类，可以去看《深入理解java虚拟机》P251</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/JVM/" class="category-chain-item">JVM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%80%BB%E7%BB%93/" class="print-no-link">#总结</a>
+      
+        <a href="/tags/jvm/" class="print-no-link">#jvm</a>
+      
+        <a href="/tags/class%E6%96%87%E4%BB%B6/" class="print-no-link">#class文件</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>JVM-类文件结构</div>
+      <div>https://vickkkyz.fun/2022/03/24/Java/JVM/4.类文件/第六章/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Vickkkyz</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/24/Java/JVM/3.%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%92%8C%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" title="JVM-垃圾收集器与内存分配策略">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JVM-垃圾收集器与内存分配策略</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/24/Java/JVM/4.%E7%B1%BB%E6%96%87%E4%BB%B6/%E7%AC%AC7%E7%AB%A0/" title="JVM-类加载机制">
+                        <span class="hidden-mobile">JVM-类加载机制</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+<!-- Load TweenLite --> <script src="https://cdn.jsdelivr.net/npm/greensock@1.20.2/dist/TweenLite.js"></script>
+<!-- Copyrighted cubism SDK --> <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script> <!-- Load Pixi (dependency for cubism 2/4 integrated loader) --> <script src="https://cdn.jsdelivr.net/npm/pixi.js@5.3.6/dist/pixi.min.js"></script> <!-- Load cubism 4 integrated loader --> <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/cubism4.min.js"></script>
+<!-- Load pio and alternative loader --> <link href="https://cdn.jsdelivr.net/gh/vickkkyz/vickkkyz.github.io@2.0/css/pio.css" rel="stylesheet" type="text/css"/> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio_sdk4.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/load.js"></script>
+<!-- 页脚添加网站运行时间 --> <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <a href="https://icp.gov.moe/?keyword=20249336" target="_blank">萌ICP备20249336号</a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/backgroundize.js"></script><!-- hexo injector body_end end --></body>
+</html>

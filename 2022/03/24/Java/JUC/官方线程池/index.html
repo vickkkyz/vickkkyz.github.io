@@ -1,0 +1,774 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 通过cdn引入霞鹭文楷字体 -->
+  <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+    onload="this.media='all'">
+  <link rel="apple-touch-icon" sizes="76x76" href="/image/beautify/favicon.ico">
+  <link rel="icon" href="/image/beautify/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Vickkkyz">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1.线程池的状态ThreadPoolExecutor使用int的高三位表示线程池的状态，低29为表示线程数量。    状态名称 高3位的值 描述    RUNNING 111 接收新任务，同时处理任务队列中的任务   SHUTDOWN 000 不接受新任务，但是处理任务队列中的任务   STOP 001 中断正在执行的任务，同时抛弃阻塞队列中的任务   TIDYING 010 任务执行完毕，活动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java多线程-jdk提供的线程池">
+<meta property="og:url" content="https://vickkkyz.fun/2022/03/24/Java/JUC/%E5%AE%98%E6%96%B9%E7%BA%BF%E7%A8%8B%E6%B1%A0/index.html">
+<meta property="og:site_name" content="Vickkkyz&#39;s Home">
+<meta property="og:description" content="1.线程池的状态ThreadPoolExecutor使用int的高三位表示线程池的状态，低29为表示线程数量。    状态名称 高3位的值 描述    RUNNING 111 接收新任务，同时处理任务队列中的任务   SHUTDOWN 000 不接受新任务，但是处理任务队列中的任务   STOP 001 中断正在执行的任务，同时抛弃阻塞队列中的任务   TIDYING 010 任务执行完毕，活动">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vickkkyz.fun/image/juc/jdkthread.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/juc/jdkthread2.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/juc/jdkthread4.png">
+<meta property="article:published_time" content="2022-03-24T12:32:56.000Z">
+<meta property="article:modified_time" content="2023-01-26T08:51:03.057Z">
+<meta property="article:author" content="Vickkkyz">
+<meta property="article:tag" content="总结">
+<meta property="article:tag" content="juc">
+<meta property="article:tag" content="并发编程">
+<meta property="article:tag" content="线程池">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://vickkkyz.fun/image/juc/jdkthread.png">
+  
+  
+  
+  <title>Java多线程-jdk提供的线程池 - Vickkkyz&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/cloudedGlass.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vickkkyz.fun","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"🍭","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/image/beautify/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><div id="web_bg"></div><!-- hexo injector body_begin end -->
+  
+
+  <!--浏览器搞笑标题-->
+  <script type="text/javascript" src="\js\FunnyTitle.js"></script>
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>VickkkyzのBlog(*/ω＼*)</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>时间轴</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/image/homePage/paperDefault5.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java多线程-jdk提供的线程池"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-24 20:32" pubdate>
+          2022年3月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Java多线程-jdk提供的线程池</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="/image/juc/jdkthread.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h1 id="1-线程池的状态"><a href="#1-线程池的状态" class="headerlink" title="1.线程池的状态"></a>1.线程池的状态</h1><p>ThreadPoolExecutor使用int的高三位表示线程池的状态，低29为表示线程数量。</p>
+<table>
+<thead>
+<tr>
+<th>状态名称</th>
+<th>高3位的值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RUNNING</td>
+<td>111</td>
+<td>接收新任务，同时处理任务队列中的任务</td>
+</tr>
+<tr>
+<td>SHUTDOWN</td>
+<td>000</td>
+<td>不接受新任务，但是处理任务队列中的任务</td>
+</tr>
+<tr>
+<td>STOP</td>
+<td>001</td>
+<td>中断正在执行的任务，同时抛弃阻塞队列中的任务</td>
+</tr>
+<tr>
+<td>TIDYING</td>
+<td>010</td>
+<td>任务执行完毕，活动线程为0时，即将进入终结阶段</td>
+</tr>
+<tr>
+<td>TERMINATED</td>
+<td>011</td>
+<td>终结状态</td>
+</tr>
+</tbody></table>
+<p>高三位111表示的是负数：- 3</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">COUNT_BITS</span> <span class="hljs-operator">=</span> <span class="hljs-number">29</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">COUNT_MASK</span> <span class="hljs-operator">=</span> <span class="hljs-number">536870911</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">RUNNING</span> <span class="hljs-operator">=</span> -<span class="hljs-number">536870912</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">SHUTDOWN</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">STOP</span> <span class="hljs-operator">=</span> <span class="hljs-number">536870912</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">TIDYING</span> <span class="hljs-operator">=</span> <span class="hljs-number">1073741824</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">TERMINATED</span> <span class="hljs-operator">=</span> <span class="hljs-number">1610612736</span>;<br></code></pre></td></tr></table></figure>
+
+<p>线程池状态和线程池中线程的数量<strong>由一个原子整型ctl来共同表示</strong></p>
+<h1 id="2-构造方法"><a href="#2-构造方法" class="headerlink" title="2.构造方法"></a>2.构造方法</h1><h2 id="2-1-最全的"><a href="#2-1-最全的" class="headerlink" title="2.1 最全的"></a>2.1 最全的</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">ThreadPoolExecutor</span><span class="hljs-params">(<span class="hljs-type">int</span> corePoolSize,</span><br><span class="hljs-params">                          <span class="hljs-type">int</span> maximumPoolSize,</span><br><span class="hljs-params">                          <span class="hljs-type">long</span> keepAliveTime,</span><br><span class="hljs-params">                          TimeUnit unit,</span><br><span class="hljs-params">                          BlockingQueue&lt;Runnable&gt; workQueue,</span><br><span class="hljs-params">                          ThreadFactory threadFactory,</span><br><span class="hljs-params">                          RejectedExecutionHandler handler)</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>corePoolSize：核心线程数</li>
+<li>maximumPoolSize：最大线程数<ul>
+<li>maximumPoolSize - corePoolSize &#x3D; 救急线程数</li>
+</ul>
+</li>
+<li>keepAliveTime：救急线程空闲时的最大生存时间</li>
+<li>unit：时间单位</li>
+<li>workQueue：阻塞队列（存放任务）<ul>
+<li>有界阻塞队列 ArrayBlockingQueue</li>
+<li>无界阻塞队列 LinkedBlockingQueue</li>
+<li>最多只有一个同步元素的 SynchronousQueue</li>
+<li>优先队列 PriorityBlockingQueue</li>
+</ul>
+</li>
+<li>threadFactory：线程工厂（给线程取名字）</li>
+<li>handler：拒绝策略</li>
+</ul>
+<p><strong>救急线程</strong>就是当核心线程都在处理任务，并且阻塞队列里已经满了的时候，如果再来一个任务，急救线程就会被创建，来处理这个任务，当超过救急线程空闲时的最大生存时间，它会被释放。（当阻塞队列有容量限制时才可以使用救急线程）</p>
+<p><strong>拒绝策略</strong>：如果线程到达 maximumPoolSize 仍然有新任务这时会执行<strong>拒绝策略</strong>。拒绝策略 jdk 提供了 4 种实现</p>
+<ul>
+<li>AbortPolicy：让调用者抛出 RejectedExecutionException 异常，<strong>这是默认策略</strong></li>
+<li>CallerRunsPolicy：让调用者运行任务</li>
+<li>DiscardPolicy：放弃本次任务</li>
+<li>DiscardOldestPolicy：放弃队列中最早的任务，本任务取而代之</li>
+</ul>
+<h2 id="2-2-newFixedThreadPool"><a href="#2-2-newFixedThreadPool" class="headerlink" title="2.2 newFixedThreadPool"></a>2.2 newFixedThreadPool</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ExecutorService <span class="hljs-title function_">newFixedThreadPool</span><span class="hljs-params">(<span class="hljs-type">int</span> nThreads)</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadPoolExecutor</span>(nThreads, nThreads, <span class="hljs-number">0L</span>, 						TimeUnit.MILLISECONDS, <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedBlockingQueue</span>());<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>用法：</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ExecutorService</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> Executors.newFixedThreadPool(<span class="hljs-number">2</span>);<br></code></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ExecutorService <span class="hljs-title function_">newFixedThreadPool</span><span class="hljs-params">(<span class="hljs-type">int</span> nThreads, ThreadFactory threadFactory)</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadPoolExecutor</span>(nThreads, nThreads, <span class="hljs-number">0L</span>, 						TimeUnit.MILLISECONDS, <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedBlockingQueue</span>(), threadFactory);<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个方法可以给线程起名字。</p>
+<h2 id="2-3-newCachedThreadPool"><a href="#2-3-newCachedThreadPool" class="headerlink" title="2.3 newCachedThreadPool"></a>2.3 newCachedThreadPool</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ExecutorService <span class="hljs-title function_">newCachedThreadPool</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadPoolExecutor</span>(<span class="hljs-number">0</span>, <span class="hljs-number">2147483647</span>, <span class="hljs-number">60L</span>, TimeUnit.SECONDS, <span class="hljs-keyword">new</span> 		<span class="hljs-title class_">SynchronousQueue</span>());<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>用法：</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ExecutorService</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> Executors.newCachedThreadPool();<br></code></pre></td></tr></table></figure>
+
+<p>没有核心线程，最大线程数为Integer.MAX_VALUE，<strong>所有创建的线程都是救急线程</strong>，空闲时生存时间为60秒</p>
+<h3 id="2-4-newSingleThreadExecutor"><a href="#2-4-newSingleThreadExecutor" class="headerlink" title="2.4 newSingleThreadExecutor"></a>2.4 newSingleThreadExecutor</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ExecutorService <span class="hljs-title function_">newSingleThreadExecutor</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Executors</span>.FinalizableDelegatedExecutorService(<span class="hljs-keyword">new</span> 				<span class="hljs-title class_">ThreadPoolExecutor</span>(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0L</span>, TimeUnit.MILLISECONDS, <span class="hljs-keyword">new</span> 					<span class="hljs-title class_">LinkedBlockingQueue</span>()));<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>用法</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ExecutorService</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> Executors.newSingleThreadExecutor();<br></code></pre></td></tr></table></figure>
+
+<p>线程数固定为1，不能修改，没有急救线程，当任务数多于1时会放入无界队列排队，任务执行完毕这个线程也不会释放。</p>
+<h1 id="3-提交任务"><a href="#3-提交任务" class="headerlink" title="3.提交任务"></a>3.提交任务</h1><p><img src="/image/juc/jdkthread2.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h1 id="4-定时执行任务"><a href="#4-定时执行任务" class="headerlink" title="4.定时执行任务"></a>4.定时执行任务</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ScheduledExecutorService <span class="hljs-title function_">newScheduledThreadPool</span><span class="hljs-params">(<span class="hljs-type">int</span> corePoolSize)</span> &#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ScheduledThreadPoolExecutor</span>(corePoolSize);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-1-schedule"><a href="#4-1-schedule" class="headerlink" title="4.1 schedule()"></a>4.1 schedule()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java">pool.schedule(()-&gt;&#123;<br>    System.out.println(<span class="hljs-string">&quot;任务1执行...&quot;</span>);<br>&#125;, <span class="hljs-number">1</span>, TimeUnit.SECONDS);<span class="hljs-comment">//延时1s之后执行</span><br>pool.schedule(()-&gt;&#123;<br>    System.out.println(<span class="hljs-string">&quot;任务2执行...&quot;</span>);<br>&#125;, <span class="hljs-number">1</span>, TimeUnit.SECONDS);<span class="hljs-comment">//延时1s之后执行</span><br></code></pre></td></tr></table></figure>
+
+<p>（无论核心线程数是1还是更多）一旦第一个任务执行受到了异常，第二个任务也不会受到影响，还是会被执行。</p>
+<h2 id="4-2-scheduleAtFixedRate"><a href="#4-2-scheduleAtFixedRate" class="headerlink" title="4.2 scheduleAtFixedRate()"></a>4.2 scheduleAtFixedRate()</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">pool.scheduleAtFixedRate(()-&gt;&#123;&#125;,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,TimeUnit.SECONDS);<br></code></pre></td></tr></table></figure>
+
+<p>以固定速率执行任务</p>
+<p>第一个参数是任务对象，第二个参数是<code>针对当前时间来说，延时的时间</code>（主线程调用这个方法后，多长时间后才开始工作），第三个参数是执行间隔（每隔这么长时间就执行一次任务，一直执行）</p>
+<p>当一个任务的执行时间超过了执行间隔，就等这个任务执行完后立刻执行下一个任务，不会让任务重叠。</p>
+<p>假如每个任务执行需要耗时2s，执行间隔是1s，明显已经超过了执行间隔，每个任务之间的时间是2s，就是任务执行时间。</p>
+<h2 id="4-3-scheduleWithFixedDelay"><a href="#4-3-scheduleWithFixedDelay" class="headerlink" title="4.3 scheduleWithFixedDelay()"></a>4.3 scheduleWithFixedDelay()</h2><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript">pool.scheduleWithFixedDelay(<span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>&#123;&#125;,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,TimeUnit.SECONDS);<br></code></pre></td></tr></table></figure>
+
+<p>第三个参数是执行间隔（这个是真正的间隔，严格意义上每个任务之间都必须有这个间隔时间），其他的参数和上面的那个方法一样</p>
+<p>假如每个任务执行需要耗时2s，再加上执行间隔1s，每个任务之间的时间是3s</p>
+<p><img src="/image/juc/jdkthread4.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h1 id="5-结束任务"><a href="#5-结束任务" class="headerlink" title="5.结束任务"></a>5.结束任务</h1><h2 id="5-1-shutdown"><a href="#5-1-shutdown" class="headerlink" title="5.1 shutdown()"></a>5.1 shutdown()</h2><p>线程池状态变为<code>SHUTDOWN</code>，不会接收新任务， 但已经提交的任务（在阻塞队列中）会执行完，调用这个方法的线程在运行完这一行会继续往后执行，不会等待线程全部SHUTDOWN之后再往后执行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ExecutorService</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> Executors.newFixedThreadPool(<span class="hljs-number">2</span>);<br>pool.shutdown();<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-2-shutdownNow"><a href="#5-2-shutdownNow" class="headerlink" title="5.2 shutdownNow()"></a>5.2 shutdownNow()</h2><p>线程池状态变为<code>STOP</code>，不会接收新任务，会将队列中的任务返回，不再执行，并用interrupt的方式中断正在执行的线程。（夺笋那）</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/JUC/" class="category-chain-item">JUC</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%80%BB%E7%BB%93/" class="print-no-link">#总结</a>
+      
+        <a href="/tags/juc/" class="print-no-link">#juc</a>
+      
+        <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="print-no-link">#并发编程</a>
+      
+        <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="print-no-link">#线程池</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java多线程-jdk提供的线程池</div>
+      <div>https://vickkkyz.fun/2022/03/24/Java/JUC/官方线程池/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Vickkkyz</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/24/Java/JUC/%E4%BA%A4%E6%9B%BF%E5%92%8C%E9%A1%BA%E5%BA%8F%E8%BE%93%E5%87%BA/" title="Java多线程-顺序&amp;交替输出">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Java多线程-顺序&amp;交替输出</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/24/Java/JUC/ReentrantLock/" title="Java多线程-ReentrantLock">
+                        <span class="hidden-mobile">Java多线程-ReentrantLock</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+<!-- Load TweenLite --> <script src="https://cdn.jsdelivr.net/npm/greensock@1.20.2/dist/TweenLite.js"></script>
+<!-- Copyrighted cubism SDK --> <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script> <!-- Load Pixi (dependency for cubism 2/4 integrated loader) --> <script src="https://cdn.jsdelivr.net/npm/pixi.js@5.3.6/dist/pixi.min.js"></script> <!-- Load cubism 4 integrated loader --> <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/cubism4.min.js"></script>
+<!-- Load pio and alternative loader --> <link href="https://cdn.jsdelivr.net/gh/vickkkyz/vickkkyz.github.io@2.0/css/pio.css" rel="stylesheet" type="text/css"/> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio_sdk4.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/load.js"></script>
+<!-- 页脚添加网站运行时间 --> <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <a href="https://icp.gov.moe/?keyword=20249336" target="_blank">萌ICP备20249336号</a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/backgroundize.js"></script><!-- hexo injector body_end end --></body>
+</html>

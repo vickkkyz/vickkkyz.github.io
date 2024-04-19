@@ -1,0 +1,741 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 通过cdn引入霞鹭文楷字体 -->
+  <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+    onload="this.media='all'">
+  <link rel="apple-touch-icon" sizes="76x76" href="/image/beautify/favicon.ico">
+  <link rel="icon" href="/image/beautify/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Vickkkyz">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1234567891011mysql&gt; show databases;+--------------------+| Database           |+--------------------+| information_schema || mysql              || performance_schema || sys                || test">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL-权限管理">
+<meta property="og:url" content="https://vickkkyz.fun/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Vickkkyz&#39;s Home">
+<meta property="og:description" content="1234567891011mysql&gt; show databases;+--------------------+| Database           |+--------------------+| information_schema || mysql              || performance_schema || sys                || test">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/table.png">
+<meta property="article:published_time" content="2022-03-24T12:35:59.000Z">
+<meta property="article:modified_time" content="2023-01-26T09:02:01.209Z">
+<meta property="article:author" content="Vickkkyz">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="数据库高级">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://vickkkyz.fun/image/mysql/table.png">
+  
+  
+  
+  <title>MySQL-权限管理 - Vickkkyz&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/cloudedGlass.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vickkkyz.fun","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"🍭","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/image/beautify/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><div id="web_bg"></div><!-- hexo injector body_begin end -->
+  
+
+  <!--浏览器搞笑标题-->
+  <script type="text/javascript" src="\js\FunnyTitle.js"></script>
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>VickkkyzのBlog(*/ω＼*)</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>时间轴</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/image/homePage/paperDefault5.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="MySQL-权限管理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-24 20:35" pubdate>
+          2022年3月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          13 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">MySQL-权限管理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; show databases;<br>+--------------------+<br>| Database           |<br>+--------------------+<br>| information_schema |<br>| mysql              |<br>| performance_schema |<br>| sys                |<br>| test               |<br>+--------------------+<br>5 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>数据库中有4个默认的表information_schema， mysql ，performance_schema，sys</p>
+<p>其中<code>mysql</code>就是用来管理数据库用户的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; use mysql<br>Reading table information for completion of table and column names<br>You can turn off this feature to get a quicker startup with -A<br><br>Database changed<br>mysql&gt; select host,user from user;<br>+-----------+------------------+<br>| host      | user             |<br>+-----------+------------------+<br>| %         | root             |<br>| localhost | mysql.infoschema |<br>| localhost | mysql.session    |<br>| localhost | mysql.sys        |<br>+-----------+------------------+<br>5 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>host</strong>：表示可以在哪个IP地址下使用user进行数据库连接，<code>%   root</code>表示任何ip地址都可以使用root进行远程连接数据库，<code>localhost  mysql.sys</code>表示只有本机可以使用mysql.sys用户进行连接。host可以是ip，ip段，域名以及%</li>
+<li><strong>user：</strong>允许登录数据库的用户名</li>
+</ul>
+<h1 id="1-用户管理"><a href="#1-用户管理" class="headerlink" title="1.用户管理"></a>1.用户管理</h1><h2 id="1-1-创建用户"><a href="#1-1-创建用户" class="headerlink" title="1.1 创建用户"></a>1.1 创建用户</h2><p><code>create user &#39;zhangsan&#39; identified by &#39;123456&#39;;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create user &#x27;zhangsan&#x27; identified by &#x27;123456&#x27;;<br>Query OK, 0 rows affected (0.01 sec)<br>mysql&gt; select host,user from user;<br>+-----------+------------------+<br>| host      | user             |<br>+-----------+------------------+<br>| %         | root             |<br>| %         | zhangsan         |<br>| localhost | mysql.infoschema |<br>| localhost | mysql.session    |<br>| localhost | mysql.sys        |<br>+-----------+------------------+<br>5 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>已经创建了一个zhangsan用户，任何主机都可以使用这个用户名进行登录</p>
+<hr>
+<p>如果想使创建的用户只能在本机连接数据库，需要在用户名后面加上<code>@&#39;localhost&#39;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs my">mysql&gt; create user &#x27;lisi&#x27;@&#x27;localhost&#x27; identified by &#x27;123456&#x27;;<br>Query OK, 0 rows affected (0.01 sec)<br><br>mysql&gt; select host,user from user;<br>+-----------+------------------+<br>| host      | user             |<br>+-----------+------------------+<br>| %         | root             |<br>| %         | zhangsan         |<br>| localhost | lisi             |<br>| localhost | mysql.infoschema |<br>| localhost | mysql.session    |<br>| localhost | mysql.sys        |<br>+-----------+------------------+<br>6 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>如果要修改的话就直接修改user表字段就行了，不过在修改完记得更新权限<code>flush privileges;</code></p>
+<h2 id="1-2-删除用户"><a href="#1-2-删除用户" class="headerlink" title="1.2 删除用户"></a>1.2 删除用户</h2><p><code>drop user &#39;zhangsan&#39;</code> &#x2F;&#x2F;默认删除的host为%的<code>普通</code>用户</p>
+<p><code>drop user &#39;lisi&#39;@&#39;localhost&#39;;</code> </p>
+<h2 id="1-3-修改当前用户的密码"><a href="#1-3-修改当前用户的密码" class="headerlink" title="1.3 修改当前用户的密码"></a>1.3 修改当前用户的密码</h2><p>root可以修改自己的密码，普通用户可以登录后修改自己的密码</p>
+<ol>
+<li><p><code>alter user user() identified by &#39;new_password&#39;;</code></p>
+</li>
+<li><p><code>set password=&#39;new_password&#39;;</code></p>
+</li>
+</ol>
+<h2 id="1-4-修改其他用户的密码"><a href="#1-4-修改其他用户的密码" class="headerlink" title="1.4 修改其他用户的密码"></a>1.4 修改其他用户的密码</h2><p>root用户还可以修改其他用户的密码</p>
+<ol>
+<li><p><code>alter user &#39;zhangsan&#39;@&#39;%&#39; identified by &#39;new_password&#39;;</code></p>
+</li>
+<li><p><code>set password for &#39;zhangsan&#39;@&#39;%&#39;=&#39;new_password&#39;;</code></p>
+</li>
+</ol>
+<h1 id="2-权限管理"><a href="#2-权限管理" class="headerlink" title="2.权限管理"></a>2.权限管理</h1><h2 id="2-1-查看和授予权限"><a href="#2-1-查看和授予权限" class="headerlink" title="2.1 查看和授予权限"></a>2.1 查看和授予权限</h2><p><code>show grant;</code> 查看当前用户权限</p>
+<p><code>show grant for zhangsan; </code>root用户查看其他用户权限</p>
+<p><code>grant all privileges on *.* to &#39;lisi&#39;@&#39;%&#39;;</code></p>
+<p>权限有：all privileges、select、update、delete、insert</p>
+<p>on表示指定权限针对哪些数据库和表，数据库.表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs mysql">//root用户下<br>mysql&gt; show grants for zhangsan;<br>+--------------------------------------+<br>| Grants for zhangsan@%                |<br>+--------------------------------------+<br>| GRANT USAGE ON *.* TO `zhangsan`@`%` | //登录权限，所有新创建的用户都具有这个权限<br>+--------------------------------------+<br>//把test数据库中的所有表的select，update权限都给zhangsan用户<br>mysql&gt; grant select,update on test.* to &#x27;zhangsan&#x27;@&#x27;%&#x27;;<br>Query OK, 0 rows affected (0.01 sec)<br>mysql&gt; show grants for zhangsan;<br>+----------------------------------------------------+<br>| Grants for zhangsan@%                              |<br>+----------------------------------------------------+<br>| GRANT USAGE ON *.* TO `zhangsan`@`%`               |<br>| GRANT SELECT, UPDATE ON `test`.* TO `zhangsan`@`%` |<br>+----------------------------------------------------+<br>2 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>在zhangsan用户下查看权限</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java">mysql&gt; show databases;<br>+--------------------+<br>| Database           |<br>+--------------------+<br>| information_schema |<br>| test               |<span class="hljs-comment">//最初是没有这个数据库的，因为上面把test数据库的权限给他了</span><br>+--------------------+<br><span class="hljs-number">2</span> rows in <span class="hljs-title function_">set</span> <span class="hljs-params">(<span class="hljs-number">0.01</span> sec)</span><br>mysql&gt; desc tb_user1;<br>+-------+-------------+------+-----+---------+-------+<br>| Field | Type        | Null | Key | Default | Extra |<br>+-------+-------------+------+-----+---------+-------+<br>| id    | <span class="hljs-type">int</span>         | YES  |     | NULL    |       |<br>| name  | varchar(<span class="hljs-number">20</span>) | YES  |     | NULL    |       |<br>| age   | <span class="hljs-type">int</span>         | YES  |     | NULL    |       |<br>+-------+-------------+------+-----+---------+-------+<br><span class="hljs-number">3</span> rows in <span class="hljs-title function_">set</span> <span class="hljs-params">(<span class="hljs-number">0.00</span> sec)</span><br><span class="hljs-comment">//zhangsan并没有insert权限</span><br>mysql&gt; insert into tb_user1 <span class="hljs-title function_">values</span><span class="hljs-params">(<span class="hljs-number">1</span>,<span class="hljs-string">&#x27;lucy&#x27;</span>,<span class="hljs-number">15</span>)</span>;<br>ERROR <span class="hljs-number">1142</span> (<span class="hljs-number">42000</span>): INSERT command denied to user <span class="hljs-string">&#x27;zhangsan&#x27;</span>@<span class="hljs-string">&#x27;localhost&#x27;</span> <span class="hljs-keyword">for</span> table <span class="hljs-string">&#x27;tb_user1&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>root用户将所有权限授予给lisi</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; grant all privileges on *.* to &#x27;lisi&#x27;@&#x27;%&#x27;;<br>Query OK, 0 rows affected (0.01 sec)<br></code></pre></td></tr></table></figure>
+
+<p>进入lisi查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; show databases;<br>+--------------------+<br>| Database           |<br>+--------------------+<br>| information_schema |<br>| mysql              |<br>| performance_schema |<br>| sys                |<br>| test               |<br>+--------------------+<br></code></pre></td></tr></table></figure>
+
+<p><code>默认权限不具有传递性，比如root用户给zhangsan select和update权限，但是zhangsan并不能将权限再授权给其他用户</code></p>
+<p>可以使用<code>with grant option</code>，表示将自己拥有的权限授权给他人。</p>
+<p>多次给用户授权不同的权限，会权限叠加而不是覆盖。</p>
+<h2 id="2-2-收回权限"><a href="#2-2-收回权限" class="headerlink" title="2.2 收回权限"></a>2.2 收回权限</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">//收回zhangsan所有库所有表的权限<br>mysql&gt; revoke all privileges on *.* from &#x27;zhangsan&#x27;@&#x27;%&#x27;;<br>Query OK, 0 rows affected (0.01 sec)<br></code></pre></td></tr></table></figure>
+
+<p>用户退出重新登录数据库后才会生效。</p>
+<p>假如你给zhangsan的权限是test数据库的所有表都有select，那么你不能单独收回test的tb_user1(其中的一个表)的select权限，要收回只能将test数据库的所有表的select权限都收回。</p>
+<h2 id="2-3-权限表"><a href="#2-3-权限表" class="headerlink" title="2.3 权限表"></a>2.3 权限表</h2><p>权限表存放在名为mysql数据库中，mysql服务器通过这些权限表来控制用户对数据库的访问，在mysql启动时，服务器将这些表中权限信息内容读入到内存。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; use mysql<br>Database changed<br>mysql&gt; show tables;<br>+------------------------------------------------------+<br>| Tables_in_mysql                                      |<br>+------------------------------------------------------+<br>| columns_priv   //列层级的权限                          |<br>| component                                            |<br>| db       //数据库层级的权限                             |<br>| default_roles                                        |<br>| engine_cost                                          |<br>| func                                                 |<br>| general_log                                          |<br>| global_grants   //动态全局授权                         |<br>| gtid_executed                                        |<br>| help_category                                        |<br>| help_keyword                                         |<br>| help_relation                                        |<br>| help_topic                                           |<br>| innodb_index_stats                                   |<br>| innodb_table_stats                                   |<br>| password_history                                     |<br>| plugin                                               |<br>| procs_priv                                           |<br>| proxies_priv                                         |<br>| replication_asynchronous_connection_failover         |<br>| replication_asynchronous_connection_failover_managed |<br>| replication_group_configuration_version              |<br>| replication_group_member_actions                     |<br>| role_edges                                           |<br>| server_cost                                          |<br>| servers                                              |<br>| slave_master_info                                    |<br>| slave_relay_log_info                                 |<br>| slave_worker_info                                    |<br>| slow_log                                             |<br>| tables_priv      //表层级的权限                        |<br>| time_zone                                            |<br>| time_zone_leap_second                                |<br>| time_zone_name                                       |<br>| time_zone_transition                                 |<br>| time_zone_transition_type                            |<br>| user     //用户账号及权限信息                           |<br>+------------------------------------------------------+<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-访问控制"><a href="#3-访问控制" class="headerlink" title="3.访问控制"></a>3.访问控制</h1><h2 id="3-1-连接核实阶段"><a href="#3-1-连接核实阶段" class="headerlink" title="3.1 连接核实阶段"></a>3.1 连接核实阶段</h2><p>检查输入的账号和密码是否与user表中的host、user、authentication_string(加密过的密码)一致。</p>
+<h2 id="3-2-请求核实阶段"><a href="#3-2-请求核实阶段" class="headerlink" title="3.2 请求核实阶段"></a>3.2 请求核实阶段</h2><p><img src="/image/mysql/table.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h1 id="4-角色"><a href="#4-角色" class="headerlink" title="4.角色"></a>4.角色</h1><p>角色是权限的集合，角色可以被授予或者收回权限，它代表了一类”人”的特征。</p>
+<h2 id="4-1-创建以及删除角色"><a href="#4-1-创建以及删除角色" class="headerlink" title="4.1 创建以及删除角色"></a>4.1 创建以及删除角色</h2><p>创建角色</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create role &#x27;manager&#x27;;  //等同于create role &#x27;manager&#x27;@&#x27;%&#x27;;<br>Query OK, 0 rows affected (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>删除角色</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; drop role &#x27;manager&#x27;;  <br>Query OK, 0 rows affected (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-2-授予及收回角色权限"><a href="#4-2-授予及收回角色权限" class="headerlink" title="4.2 授予及收回角色权限"></a>4.2 授予及收回角色权限</h2><p>授予权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs mysql">//root用户下<br>mysql&gt; grant select,update on test.tb_user1 to &#x27;manager&#x27;;<br>Query OK, 0 rows affected (0.00 sec)<br>mysql&gt; show grants for &#x27;manager&#x27;@&#x27;%&#x27;;<br>+------------------------------------------------------------+<br>| Grants for manager@%                                       |<br>+------------------------------------------------------------+<br>| GRANT USAGE ON *.* TO `manager`@`%`                        |<br>| GRANT SELECT, UPDATE ON `test`.`tb_user1` TO `manager`@`%` |<br>+------------------------------------------------------------+<br>2 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>取消权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; revoke select,update on test.tb_user1 from &#x27;manager&#x27;;<br>Query OK, 0 rows affected (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-3-给用户赋予角色"><a href="#4-3-给用户赋予角色" class="headerlink" title="4.3 给用户赋予角色"></a>4.3 给用户赋予角色</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; grant &#x27;manager&#x27;@&#x27;%&#x27; to &#x27;zhangsan&#x27;@&#x27;%&#x27;;<br>Query OK, 0 rows affected (0.01 sec)<br><br>mysql&gt; show grants for &#x27;zhangsan&#x27;@&#x27;%&#x27;;<br>+--------------------------------------------+<br>| Grants for zhangsan@%                      |<br>+--------------------------------------------+<br>| GRANT USAGE ON *.* TO `zhangsan`@`%`       |<br>| GRANT UPDATE ON `test`.* TO `zhangsan`@`%` |<br>| GRANT `manager`@`%` TO `zhangsan`@`%`      |<br>+--------------------------------------------+<br>3 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>由于mysql中创建角色都是默认没有被激活，所以给用户赋予角色也没有角色的权限，需要激活角色。<code>激活后，用户需要重新登录才能看到赋予的角色以及使用角色的权限。</code></p>
+<p>登录zhangsan用户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs mysql">查询当前角色是否被激活<br>mysql&gt; select current_role();<br>+----------------+<br>| current_role() |<br>+----------------+<br>| NONE           |//未被激活，因此用户未具备相应的角色<br>+----------------+<br>1 row in set (0.00 sec)<br>//激活角色<br>mysql&gt; set default role &#x27;manager&#x27;@&#x27;%&#x27; to &#x27;zhangsan&#x27;@&#x27;%&#x27;;<br>Query OK, 0 rows affected (0.00 sec)<br>//退出重新登录<br>mysql&gt; select current_role();<br>+----------------+<br>| current_role() |<br>+----------------+<br>| `manager`@`%`  |<br>+----------------+<br>1 row in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>还有一种方法可以对所有角色<strong>永久激活</strong>，新创建的角色都默认激活</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs mysql">//ROOT用户下<br>mysql&gt; show variables like &#x27;activate_all_roles_on_login&#x27;;<br>+-----------------------------+-------+<br>| Variable_name               | Value |<br>+-----------------------------+-------+<br>| activate_all_roles_on_login | OFF   |<br>+-----------------------------+-------+<br>1 row in set (0.01 sec)<br>mysql&gt; set global activate_all_roles_on_login=on;<br>Query OK, 0 rows affected (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/" class="print-no-link">#数据库高级</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>MySQL-权限管理</div>
+      <div>https://vickkkyz.fun/2022/03/24/计算机/mysql/权限管理/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Vickkkyz</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84/" title="MySQL-目录结构">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">MySQL-目录结构</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/24/%E8%AE%A1%E7%AE%97%E6%9C%BA/LeetCoode/%E5%8F%8C%E6%8C%87%E9%92%88/" title="双指针">
+                        <span class="hidden-mobile">双指针</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+<!-- Load TweenLite --> <script src="https://cdn.jsdelivr.net/npm/greensock@1.20.2/dist/TweenLite.js"></script>
+<!-- Copyrighted cubism SDK --> <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script> <!-- Load Pixi (dependency for cubism 2/4 integrated loader) --> <script src="https://cdn.jsdelivr.net/npm/pixi.js@5.3.6/dist/pixi.min.js"></script> <!-- Load cubism 4 integrated loader --> <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/cubism4.min.js"></script>
+<!-- Load pio and alternative loader --> <link href="https://cdn.jsdelivr.net/gh/vickkkyz/vickkkyz.github.io@2.0/css/pio.css" rel="stylesheet" type="text/css"/> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio_sdk4.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/load.js"></script>
+<!-- 页脚添加网站运行时间 --> <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <a href="https://icp.gov.moe/?keyword=20249336" target="_blank">萌ICP备20249336号</a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/backgroundize.js"></script><!-- hexo injector body_end end --></body>
+</html>

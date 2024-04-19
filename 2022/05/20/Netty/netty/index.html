@@ -1,0 +1,725 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 通过cdn引入霞鹭文楷字体 -->
+  <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+    onload="this.media='all'">
+  <link rel="apple-touch-icon" sizes="76x76" href="/image/beautify/favicon.ico">
+  <link rel="icon" href="/image/beautify/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Vickkkyz">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="官网上给Netty的定义是：  Netty is an asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers &amp; clients.  即Netty是一个异步的、基于事件驱动的、网络应用框架，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java网络编程-Netty">
+<meta property="og:url" content="https://vickkkyz.fun/2022/05/20/Netty/netty/index.html">
+<meta property="og:site_name" content="Vickkkyz&#39;s Home">
+<meta property="og:description" content="官网上给Netty的定义是：  Netty is an asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers &amp; clients.  即Netty是一个异步的、基于事件驱动的、网络应用框架，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vickkkyz.fun/image/netty/reactor%E5%8D%95%E7%BA%BF%E7%A8%8B.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/netty/reactor%E5%A4%9A%E7%BA%BF%E7%A8%8B.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/netty/%E4%B8%BB%E4%BB%8EReactor.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/netty/netty1.png">
+<meta property="article:published_time" content="2022-05-20T13:39:50.000Z">
+<meta property="article:modified_time" content="2023-01-26T08:57:57.935Z">
+<meta property="article:author" content="Vickkkyz">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="netty">
+<meta property="article:tag" content="NIO">
+<meta property="article:tag" content="总结">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://vickkkyz.fun/image/netty/reactor%E5%8D%95%E7%BA%BF%E7%A8%8B.png">
+  
+  
+  
+  <title>Java网络编程-Netty - Vickkkyz&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/cloudedGlass.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vickkkyz.fun","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"🍭","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/image/beautify/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><div id="web_bg"></div><!-- hexo injector body_begin end -->
+  
+
+  <!--浏览器搞笑标题-->
+  <script type="text/javascript" src="\js\FunnyTitle.js"></script>
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>VickkkyzのBlog(*/ω＼*)</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>时间轴</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/image/homePage/paperDefault5.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java网络编程-Netty"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-05-20 21:39" pubdate>
+          2022年5月20日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Java网络编程-Netty</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>官网上给Netty的定义是：</p>
+<blockquote>
+<p>Netty is <em>an asynchronous event-driven network application framework</em><br> for rapid development of maintainable high performance protocol servers &amp; clients.</p>
+</blockquote>
+<p>即Netty是一个异步的、基于事件驱动的、网络应用框架，是用来快速的开发高性能的客户端和服务器。</p>
+<p>Netty对JDK自带的API进行了封装，解决了使用NIO出现的代码比较繁琐的问题。</p>
+<h1 id="1-线程模型"><a href="#1-线程模型" class="headerlink" title="1.线程模型"></a>1.线程模型</h1><p>目前存在的线程模型有：传统阻塞IO服务模型，Reactor模式。不同的线程模型对程序的性能影响很大。</p>
+<h2 id="1-1-传统阻塞IO服务模型"><a href="#1-1-传统阻塞IO服务模型" class="headerlink" title="1.1 传统阻塞IO服务模型"></a>1.1 传统阻塞IO服务模型</h2><p>其实在上篇讲NIO的时候提到过阻塞IO模型。即阻塞模式下，相关方法都会导致线程暂停。</p>
+<p>比如在实现客户端服务器的时候，服务器监听一个特定端口，相关方法是accpet，如果没有连接，服务器就会一直阻塞到这里，当一个客户端与服务器进行连接时，这个方法才会继续往下运行，然后服务器监听是否有客户端进行写入数据，即read方法，在没有数据可读时会让线程暂停。</p>
+<p>如果在单线程情况下，又来一个客户端想要与服务器进行连接，那么现在就不能进行连接，因为服务器正在read方法处阻塞，等待第一个客户端发送数据，只有当第一个客户端发送完数据，服务器才会处理新的accpet事件。</p>
+<p>在多线程情况下，每次当有连接建立时，服务端都需要创建一个新的线程来处理客户端的业务，但是这样也很不好，因为系统最大的线程数是有限的，对于突发的大量客户端连接不可能创建很多线程去处理连接。并且线程的频繁上下文切换也极度浪费系统资源。</p>
+<p>线程池在一定程度上解决了这个问题</p>
+<h2 id="1-2-Reactor模式"><a href="#1-2-Reactor模式" class="headerlink" title="1.2 Reactor模式"></a>1.2 Reactor模式</h2><h3 id="1-2-1-单Reactor单线程"><a href="#1-2-1-单Reactor单线程" class="headerlink" title="1.2.1 单Reactor单线程"></a>1.2.1 单Reactor单线程</h3><p><img src="/image/netty/reactor%E5%8D%95%E7%BA%BF%E7%A8%8B.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>Reactor就类似于NIO中的selector，因为服务器线程只有一个，所以是单Reactor，它可以同时监听多路请求，一次性将监听到的事件都取出来然后依次处理。但是如果在处理一个事件时发生阻塞，其他事件还是需要等待。</p>
+<p><strong>优点：</strong>服务器端用<strong>一个线程</strong>通过多路复用完成所有的io操作(连接，读，写等)，模型简单</p>
+<p><strong>缺点：</strong>性能问题，无法发挥多核CPU的性能，服务器线程在处理一个客户端上的事件时，无法处理其他客户端的事件。也不太可靠，如果线程意外终止或者进入死循环，则整个系统通信模块不可以使用，造成节点故障。</p>
+<p>使用NIO实现的聊天室就是单reactor单线程模型。</p>
+<h3 id="1-2-2-单Reactor多线程"><a href="#1-2-2-单Reactor多线程" class="headerlink" title="1.2.2 单Reactor多线程"></a>1.2.2 单Reactor多线程</h3><p><img src="/image/netty/reactor%E5%A4%9A%E7%BA%BF%E7%A8%8B.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>服务器通过select监听客户端请求事件，将不同的请求分发给不同的线程处理。</p>
+<p><strong>优点：</strong>可以充分利用多核CPU的处理能力</p>
+<p><strong>缺点：</strong>多线程数据共享和访问比较复杂，reactor处理所有事件的监听和响应，是在单线程下运行的，在高并发场景下容易出现性能瓶颈。</p>
+<h3 id="1-2-3-主从Reactor多线程"><a href="#1-2-3-主从Reactor多线程" class="headerlink" title="1.2.3 主从Reactor多线程"></a>1.2.3 主从Reactor多线程</h3><p><img src="/image/netty/%E4%B8%BB%E4%BB%8EReactor.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>可以有多个reactor子线程</p>
+<p><strong>优点：</strong>父线程与子线程的数据交互简单，Reactor父线程只需要接收新连接，子线程完成后序的业务处理。</p>
+<p><strong>缺点：</strong>编程复杂度高</p>
+<h1 id="2-Netty"><a href="#2-Netty" class="headerlink" title="2.Netty"></a>2.Netty</h1><p>netty主要基于主从Reactor(反应器)多线程模型，并做了一定改进</p>
+<p>以下是netty中重要的组件</p>
+<h2 id="2-1-Channel"><a href="#2-1-Channel" class="headerlink" title="2.1 Channel"></a>2.1 Channel</h2><p>Netty不直接使用java nio中的Channel组件，而是对Channel组件进行了自己的封装。服务器编程应用中使用最多的是通信协议是TCP，对应的netty传输通道类型是NioSocketChannel类，netty服务器监听通道类型为NioServerSocketChannel。</p>
+<p>在netty的NioSocketChannel内部封装了一个java nio的SelectableChannel成员，对NioSocketChannel通道上的所有io操作最终都会落地到java nio 中的SelectableChannel底层通道。</p>
+<p>一个Channel绑定一个EventLoop，以后的所有关于这个channel的请求处理的事件都是由绑定的EventLoop接收。</p>
+<h2 id="2-2-EventLoop"><a href="#2-2-EventLoop" class="headerlink" title="2.2 EventLoop"></a>2.2 EventLoop</h2><p>EventLoop，即事件循环，是一个单线程执行器，其中维护了一个Selector，里面有run方法处理Channel上源源不断的io事件。</p>
+<p>EventLoopGroup是一组EventLoop，即事件循环组，Channel会调用EventLoopGroup的register方法来绑定其中的一个EventLoop，以后这个channel上的io事件都由此EventLoop来处理。<strong>一个EventLoop可以管理多个Channel</strong></p>
+<h3 id="1、构造方法"><a href="#1、构造方法" class="headerlink" title="1、构造方法"></a>1、构造方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//1.创建事件循环组,可以处理io事件、普通事件、定时事件</span><br><span class="hljs-comment">//每个事件循环是一个线程</span><br><span class="hljs-comment">//selector+线程池</span><br><span class="hljs-type">EventLoopGroup</span> <span class="hljs-variable">group</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>();<br><br><span class="hljs-keyword">public</span> <span class="hljs-title function_">NioEventLoopGroup</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-built_in">this</span>(<span class="hljs-number">0</span>);<br>&#125;<br><br><span class="hljs-comment">//所以如果不指定事件循环对象的个数，默认创建的个数是NettyRuntime.availableProcessors() * 2个，即cpu的核心数×2</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_EVENT_LOOP_THREADS</span> <span class="hljs-operator">=</span> Math.max(<span class="hljs-number">1</span>, SystemPropertyUtil.getInt(<span class="hljs-string">&quot;io.netty.eventLoopThreads&quot;</span>, NettyRuntime.availableProcessors() * <span class="hljs-number">2</span>));<br><span class="hljs-keyword">protected</span> <span class="hljs-title function_">MultithreadEventLoopGroup</span><span class="hljs-params">(<span class="hljs-type">int</span> nThreads, Executor executor, Object... args)</span> &#123;<br>    <span class="hljs-built_in">super</span>(nThreads == <span class="hljs-number">0</span> ? DEFAULT_EVENT_LOOP_THREADS : nThreads, executor, args);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2、处理普通事件、定时事件"><a href="#2、处理普通事件、定时事件" class="headerlink" title="2、处理普通事件、定时事件"></a>2、处理普通事件、定时事件</h3><p><strong>处理普通任务</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TestEventLoop</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br><br>        <span class="hljs-type">EventLoopGroup</span> <span class="hljs-variable">group</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>(<span class="hljs-number">2</span>);<br>        System.out.println(group.next());<br>        System.out.println(group.next());<br>        System.out.println(group.next());<br>        System.out.println(group.next());<br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 输出结果：说明只有两个EventLoop</span><br><span class="hljs-comment">         * io.netty.channel.nio.NioEventLoop@4facf68f</span><br><span class="hljs-comment">         * io.netty.channel.nio.NioEventLoop@76508ed1</span><br><span class="hljs-comment">         * io.netty.channel.nio.NioEventLoop@4facf68f</span><br><span class="hljs-comment">         * io.netty.channel.nio.NioEventLoop@76508ed1</span><br><span class="hljs-comment">         */</span><br><br>        <span class="hljs-comment">//通过EventLoop执行普通任务</span><br>        group.next().execute(()-&gt;&#123;<br>            log.debug(<span class="hljs-string">&quot;event&quot;</span>);<br>        &#125;);<br><br>        group.next().execute(()-&gt;&#123;<br>            log.debug(<span class="hljs-string">&quot;event2&quot;</span>);<br>        &#125;);<br><br>        group.next().execute(()-&gt;&#123;<br>            log.debug(<span class="hljs-string">&quot;event3&quot;</span>);<br>        &#125;);<br><br>        log.debug(<span class="hljs-string">&quot;main&quot;</span>);<br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 17:06:22.731 [nioEventLoopGroup-2-1] DEBUG vickkkyz.TestEventLoop - event</span><br><span class="hljs-comment">         * 17:06:22.731 [nioEventLoopGroup-2-2] DEBUG vickkkyz.TestEventLoop - event2</span><br><span class="hljs-comment">         * 17:06:22.732 [main] DEBUG vickkkyz.TestEventLoop - main</span><br><span class="hljs-comment">         * 17:06:22.732 [nioEventLoopGroup-2-1] DEBUG vickkkyz.TestEventLoop - event3</span><br><span class="hljs-comment">         */</span><br>        <br>         优雅地关闭<br>         group.shutdownGracefully();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>处理定时任务</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TestEventLoop</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br><br>        <span class="hljs-type">EventLoopGroup</span> <span class="hljs-variable">group</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>(<span class="hljs-number">2</span>);<br><br>        <span class="hljs-comment">//通过EventLoop执行普通任务</span><br>        group.next().scheduleAtFixedRate(()-&gt;&#123;<br>            log.debug(<span class="hljs-string">&quot;event&quot;</span>);<br>        &#125;,<span class="hljs-number">0</span>,<span class="hljs-number">1</span>, TimeUnit.SECONDS);<br><br>        log.debug(<span class="hljs-string">&quot;main&quot;</span>);<br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 17:09:50.779 [main] DEBUG vickkkyz.TestEventLoop - main</span><br><span class="hljs-comment">         * 17:09:50.780 [nioEventLoopGroup-2-1] DEBUG vickkkyz.TestEventLoop - event</span><br><span class="hljs-comment">         * 17:09:51.781 [nioEventLoopGroup-2-1] DEBUG vickkkyz.TestEventLoop - event</span><br><span class="hljs-comment">         * 17:09:52.775 [nioEventLoopGroup-2-1] DEBUG vickkkyz.TestEventLoop - event</span><br><span class="hljs-comment">         * 17:09:53.778 [nioEventLoopGroup-2-1] DEBUG vickkkyz.TestEventLoop - event</span><br><span class="hljs-comment">         * 17:09:54.776 [nioEventLoopGroup-2-1] DEBUG vickkkyz.TestEventLoop - event</span><br><span class="hljs-comment">         */</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3、处理IO事件"><a href="#3、处理IO事件" class="headerlink" title="3、处理IO事件"></a>3、处理IO事件</h3><p>io事件就是客户端服务器事件。客户端发送数据，服务器接收数据。</p>
+<p><strong>客户端</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Client</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> InterruptedException, IOException &#123;<br>        <span class="hljs-type">Channel</span> <span class="hljs-variable">channel</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Bootstrap</span>()<br>            .group(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>())<br>            .channel(NioSocketChannel.class)<br>            .handler(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;SocketChannel&gt;() &#123;<br><br>                <span class="hljs-meta">@Override</span><br>                <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(SocketChannel socketChannel)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>                    socketChannel.pipeline().addLast(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StringEncoder</span>());<br>                &#125;<br>            &#125;)<br>            .connect(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InetSocketAddress</span>(<span class="hljs-string">&quot;localhost&quot;</span>, <span class="hljs-number">8080</span>))<br>            .sync()<br>            .channel();<br>        System.out.println(channel);<br>        <span class="hljs-comment">// 此处打断点调试，调用 channel.writeAndFlush(...);</span><br>        System.in.read();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>服务器</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Server</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerBootstrap</span>()<br>            .group(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>())<br>            .channel(NioServerSocketChannel.class)<br>            .childHandler(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;SocketChannel&gt;() &#123;<br><br>                <span class="hljs-meta">@Override</span><br>                <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(SocketChannel socketChannel)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>                    socketChannel.pipeline().addLast(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInboundHandlerAdapter</span>()&#123;<br>                        <span class="hljs-meta">@Override</span><br>                        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">channelRead</span><span class="hljs-params">(ChannelHandlerContext ctx, Object msg)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>                            <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> (ByteBuf) msg;<br>                            log.debug(buf.toString(StandardCharsets.UTF_8));<br>                            <span class="hljs-built_in">super</span>.channelRead(ctx, msg);<br>                        &#125;<br>                    &#125;);<br>                &#125;<br>            &#125;)<br>            .bind(<span class="hljs-number">8080</span>);<br>    &#125;<br><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="3、分工"><a href="#3、分工" class="headerlink" title="3、分工"></a>3、分工</h3><p>创建两个EventLoopGroup，一个只负责accept事件(称为boss)，另一个负责读写事件(称为worker)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//启动器，负责装配netty组件，将它们组合起来，启动服务器</span><br><span class="hljs-type">ServerBootstrap</span> <span class="hljs-variable">serverBootstrap</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerBootstrap</span>();<br><span class="hljs-comment">//创建 NioEventLoopGroup组件()，第一个是boss，第二个是worker</span><br><span class="hljs-type">ServerBootstrap</span> <span class="hljs-variable">group1</span> <span class="hljs-operator">=</span> serverBootstrap.group(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>(), <span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>());<br></code></pre></td></tr></table></figure>
+
+<p>当有的<strong>任务需要较长的时间处理时，可以使用非NioEventLoopGroup</strong>，避免同一个NioEventLoop中的其他Channel在较长的时间内都无法得到处理,只需要将这个eventLoop的处理结果传递给这个非NioEventLoop处理即可(DefaultEventLoop)</p>
+<p><img src="/image/netty/netty1.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Server</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">EventLoopGroup</span> <span class="hljs-variable">group</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultEventLoop</span>();<br>        <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerBootstrap</span>()<br>                .group(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NioEventLoopGroup</span>())<br>                .channel(NioServerSocketChannel.class)<br>                .childHandler(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInitializer</span>&lt;SocketChannel&gt;() &#123;<br><br>                    <span class="hljs-meta">@Override</span><br>                    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initChannel</span><span class="hljs-params">(SocketChannel socketChannel)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>                        socketChannel.pipeline().addLast(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInboundHandlerAdapter</span>()&#123;<br>                            <span class="hljs-meta">@Override</span><br>                            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">channelRead</span><span class="hljs-params">(ChannelHandlerContext ctx, Object msg)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>                                <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> (ByteBuf) msg;<br>                                log.debug(buf.toString(StandardCharsets.UTF_8));<br>                                <span class="hljs-comment">// 调用下一个handler</span><br>                                ctx.fireChannelRead(msg);<br>                            &#125;<br>                        &#125;).addLast(group,<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChannelInboundHandlerAdapter</span>()&#123;<br>                            <span class="hljs-meta">@Override</span><br>                            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">channelRead</span><span class="hljs-params">(ChannelHandlerContext ctx, Object msg)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>                                <span class="hljs-type">ByteBuf</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> (ByteBuf) msg;<br>                                log.debug(buf.toString(StandardCharsets.UTF_8));<br>                            &#125;<br>                        &#125;);<br>                    &#125;<br>                &#125;)<br>                .bind(<span class="hljs-number">8080</span>);<br>    &#125;<br><br>&#125;<br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 18:49:28.514 [nioEventLoopGroup-3-2] DEBUG vickkkyz.Server - 1</span><br><span class="hljs-comment"> * 18:49:28.514 [defaultEventLoop-1-1] DEBUG vickkkyz.Server - 1</span><br><span class="hljs-comment"> */</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="4、如何切换EventLoop"><a href="#4、如何切换EventLoop" class="headerlink" title="4、如何切换EventLoop"></a>4、如何切换EventLoop</h3><p>channelRead事件的传播流程, channelRead方法是在AbstractChannelHandlerContext类的invokeChannelRead方法中被调用。这里会判断当前handler和下一个handler是否是同一个，如果是，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">invokeChannelRegistered</span><span class="hljs-params">(<span class="hljs-keyword">final</span> AbstractChannelHandlerContext next)</span> &#123;<br>    <span class="hljs-type">EventExecutor</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> next.executor();<br>    <span class="hljs-keyword">if</span> (executor.inEventLoop()) &#123;<br>        next.invokeChannelRegistered();<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        executor.execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                next.invokeChannelRegistered();<br>            &#125;<br>        &#125;);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-3-Future-Promise"><a href="#2-3-Future-Promise" class="headerlink" title="2.3 Future &amp; Promise"></a>2.3 Future &amp; Promise</h2><h2 id="2-4-Handler-Pipeline"><a href="#2-4-Handler-Pipeline" class="headerlink" title="2.4 Handler &amp; Pipeline"></a>2.4 Handler &amp; Pipeline</h2><h2 id="2-5-ByteBuf"><a href="#2-5-ByteBuf" class="headerlink" title="2.5 ByteBuf"></a>2.5 ByteBuf</h2>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" class="category-chain-item">Java-网络编程</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/java/" class="print-no-link">#java</a>
+      
+        <a href="/tags/netty/" class="print-no-link">#netty</a>
+      
+        <a href="/tags/NIO/" class="print-no-link">#NIO</a>
+      
+        <a href="/tags/%E6%80%BB%E7%BB%93/" class="print-no-link">#总结</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java网络编程-Netty</div>
+      <div>https://vickkkyz.fun/2022/05/20/Netty/netty/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Vickkkyz</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年5月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/05/22/Redis/redis/" title="Redis">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/05/16/%E8%AE%A1%E7%AE%97%E6%9C%BA/LeetCoode/KMP/" title="KMP">
+                        <span class="hidden-mobile">KMP</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+<!-- Load TweenLite --> <script src="https://cdn.jsdelivr.net/npm/greensock@1.20.2/dist/TweenLite.js"></script>
+<!-- Copyrighted cubism SDK --> <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script> <!-- Load Pixi (dependency for cubism 2/4 integrated loader) --> <script src="https://cdn.jsdelivr.net/npm/pixi.js@5.3.6/dist/pixi.min.js"></script> <!-- Load cubism 4 integrated loader --> <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/cubism4.min.js"></script>
+<!-- Load pio and alternative loader --> <link href="https://cdn.jsdelivr.net/gh/vickkkyz/vickkkyz.github.io@2.0/css/pio.css" rel="stylesheet" type="text/css"/> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio_sdk4.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/load.js"></script>
+<!-- 页脚添加网站运行时间 --> <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <a href="https://icp.gov.moe/?keyword=20249336" target="_blank">萌ICP备20249336号</a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/backgroundize.js"></script><!-- hexo injector body_end end --></body>
+</html>

@@ -1,0 +1,904 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 通过cdn引入霞鹭文楷字体 -->
+  <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+    onload="this.media='all'">
+  <link rel="apple-touch-icon" sizes="76x76" href="/image/beautify/favicon.ico">
+  <link rel="icon" href="/image/beautify/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Vickkkyz">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="索引是存储引擎用于从海量数据中快速找到数据记录的一种数据结构，MySQL在进行数据查找时，首先查看查询条件是否命中某条索引，符合则通过索引查找相关数据，如果不符合则需要全表扫描。 索引是在存储引擎中实现的，因此每种存储引擎的索引实现不一定完全相同。 优点：索引可以减少磁盘I&#x2F;O的次数(把页面从磁盘加载到内存中耗时长)，加快查询速率。 缺点：创建索引和维护索引需要耗费时间，并且索引需要占用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL-索引">
+<meta property="og:url" content="https://vickkkyz.fun/2022/03/25/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E7%B4%A2%E5%BC%95/index.html">
+<meta property="og:site_name" content="Vickkkyz&#39;s Home">
+<meta property="og:description" content="索引是存储引擎用于从海量数据中快速找到数据记录的一种数据结构，MySQL在进行数据查找时，首先查看查询条件是否命中某条索引，符合则通过索引查找相关数据，如果不符合则需要全表扫描。 索引是在存储引擎中实现的，因此每种存储引擎的索引实现不一定完全相同。 优点：索引可以减少磁盘I&#x2F;O的次数(把页面从磁盘加载到内存中耗时长)，加快查询速率。 缺点：创建索引和维护索引需要耗费时间，并且索引需要占用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql6.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql7.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql9.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql8.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql11.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql10.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql15.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql17.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql16.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql18.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql19.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql20.png">
+<meta property="article:published_time" content="2022-03-25T02:48:45.000Z">
+<meta property="article:modified_time" content="2023-01-26T09:02:22.811Z">
+<meta property="article:author" content="Vickkkyz">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="数据库高级">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://vickkkyz.fun/image/mysql/mysql6.png">
+  
+  
+  
+  <title>MySQL-索引 - Vickkkyz&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/cloudedGlass.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vickkkyz.fun","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"🍭","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/image/beautify/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><div id="web_bg"></div><!-- hexo injector body_begin end -->
+  
+
+  <!--浏览器搞笑标题-->
+  <script type="text/javascript" src="\js\FunnyTitle.js"></script>
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>VickkkyzのBlog(*/ω＼*)</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>时间轴</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/image/homePage/paperDefault5.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="MySQL-索引"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-25 10:48" pubdate>
+          2022年3月25日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">MySQL-索引</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><code>索引</code>是<code>存储引擎</code>用于从海量数据中快速找到数据记录的一种数据结构，MySQL在进行数据查找时，首先查看查询条件是否命中某条索引，符合则通过索引查找相关数据，如果不符合则需要全表扫描。</p>
+<p>索引是在存储引擎中实现的，因此每种存储引擎的索引实现不一定完全相同。</p>
+<p><strong>优点：</strong>索引可以减少磁盘I&#x2F;O的次数(把页面从磁盘加载到内存中耗时长)，加快查询速率。</p>
+<p><strong>缺点：</strong>创建索引和维护索引需要耗费时间，并且索引需要占用磁盘空间，因为它存储在磁盘上。</p>
+<h1 id="1-InnoDB中的索引"><a href="#1-InnoDB中的索引" class="headerlink" title="1. InnoDB中的索引"></a>1. InnoDB中的索引</h1><h2 id="1-1-设计索引"><a href="#1-1-设计索引" class="headerlink" title="1.1 设计索引"></a>1.1 设计索引</h2><p><img src="/image/mysql/mysql6.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p><img src="/image/mysql/mysql7.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>采用B+树的格式，只有最底层的叶子结点存储的是一条条数据，其余的页存储的都是每页数据的目录信息。一个页默认16KB</p>
+<h2 id="1-2-索引分类"><a href="#1-2-索引分类" class="headerlink" title="1.2 索引分类"></a>1.2 索引分类</h2><p>索引按照<strong>物理实现</strong>方式分：</p>
+<h3 id="1-2-1-聚簇索引"><a href="#1-2-1-聚簇索引" class="headerlink" title="1.2.1 聚簇索引"></a>1.2.1 聚簇索引</h3><p>InnoDB中使用B+树这种数据结构设计的索引它是一个整体，这个整体就是聚簇索引。因此聚簇索引不单是一个索引类型，而是一种数据存储方式，用户所有记录都存储在叶子节点（这里的存储是从操作系统底层来说的，而不是用户看到的存放在表中），所以我们可以说数据即索引，索引即数据。在InnoDB中索引存放在<code>表名.ibd</code>中。</p>
+<p><strong>具有这两个特点的B+树称为聚簇索引：</strong></p>
+<ul>
+<li>页内的记录是按照主键的大小顺序排序成一个单向链表，各个存放用户记录的页也是根据页中用户记录的主键大小顺序排序成一个双向链表，存放目录向的页分为不同的层次，在同一层次的页也是根据页中目录项记录的主键大小排成一个双向链表。</li>
+<li>B+树的叶子节点存储的是完整的（每列信息都存储了）用户记录。</li>
+</ul>
+<p>InnoDB存储引擎会自动为我们创建聚簇索引。每个MySQL表只能有一个聚簇索引</p>
+<p>设计索引那里的图片就是聚簇索引</p>
+<p>目录项记录中是<code>主键+页号</code></p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>访问速度更快</li>
+<li>对基于主键的排序查找和范围查找速度很快</li>
+<li>减少io操作</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>插入速度严重依赖于插入顺序，对于InnoDB，我们一般都会定义一个自增的ID列为主键。如果没有定义主键，InnodDB会选择一个非空的唯一索引代替，如果没有这样的索引，InnoDB会隐式的定义一个主键来作为聚簇索引。</li>
+<li>更新主键的代价很高，因为要依次往后更新。对于InnoDB，我们一般定义主键不可更新</li>
+<li>二级索引访问需要两次索引查找</li>
+</ul>
+<ol start="2">
+<li>非聚簇索引（二级索引 &#x2F; 辅助索引）</li>
+</ol>
+<blockquote>
+<p>“聚簇”表示数据行和相邻的键值聚簇的存储在一起</p>
+</blockquote>
+<h3 id="1-2-2-非聚簇索引-二级索引"><a href="#1-2-2-非聚簇索引-二级索引" class="headerlink" title="1.2.2 非聚簇索引(二级索引)"></a>1.2.2 非聚簇索引(二级索引)</h3><p><img src="/image/mysql/mysql9.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>聚簇索引是以主键作为搜索条件，非聚簇索引是指定其他列做为搜索条件</p>
+<p>目录项记录中是<code>指定列+主键号+页号</code></p>
+<p>数据项记录中是<code>指定列+主键号</code></p>
+<p>比如表中有c1  c2  c3列，c1是主键，但是我们想要以c2列作为搜索条件，就只能创建一个非聚簇索引，但是此时的命令是select * 即需要显示出所有字段，就需要一个回表的操作，找到c2后回聚簇索引中找完整的表记录。</p>
+<h3 id="1-2-3-联合索引"><a href="#1-2-3-联合索引" class="headerlink" title="1.2.3 联合索引"></a>1.2.3 联合索引</h3><p><img src="/image/mysql/mysql8.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>也是非聚簇索引，就是可以由多个列联合作为搜索条件。</p>
+<p>目录项记录中是<code>联合的列+页号</code></p>
+<h2 id="1-3-B-树页面特点"><a href="#1-3-B-树页面特点" class="headerlink" title="1.3 B+树页面特点"></a>1.3 B+树页面特点</h2><p><img src="/image/mysql/mysql11.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<ol>
+<li>B+树根节点自被创建起，就永远不会移动</li>
+<li>内节点（非叶子节点）中目录项记录需要唯一，因此二级索引都引用主键索引，即data域中存放主键</li>
+<li>一个页面最少存储2条记录</li>
+</ol>
+<h2 id="1-4-B-树形成过程"><a href="#1-4-B-树形成过程" class="headerlink" title="1.4 B+树形成过程"></a>1.4 B+树形成过程</h2><p>每当为某个表创建一个B+树索引时，都会为这个索引创建一个根节点页面，最开始表中没有数据的时候，每个B+树对应的根节点中既没有用户记录，也没有目录项记录。</p>
+<p>随后向表中插入用户记录时，先把用户记录存储到这个根节点中。</p>
+<p>当根节点的可用空间用完时（一般一个页面只能存取有限的空间），如果想要继续插入记录，此时会将根节点中的所有记录赋值一份到一个新分配的页，然后对这个新页进行页分裂的操作，得到另一个新页，此时新插入的记录根据键值（聚簇索引中是主键值，非聚簇索引中是索引列的值）的大小由低到高分配到新页中，而根节点就变为存储目录项记录的页。</p>
+<h2 id="1-5-B-树查找行记录最多只需1-3次磁盘I-O"><a href="#1-5-B-树查找行记录最多只需1-3次磁盘I-O" class="headerlink" title="1.5 B+树查找行记录最多只需1~3次磁盘I&#x2F;O"></a>1.5 B+树查找行记录最多只需1~3次磁盘I&#x2F;O</h2><p><strong>原因</strong>：</p>
+<p>InnoDB存储引擎中页的大小默认为16KB，一般表的主键类型为int占4个字节，指针类型一般也占4-8个字节，假设忽略其他列的类型大小，则一个也可以存放16KB&#x2F;(8B+8B)&#x3D;1000条用户记录，所以如果是一个三层的B+树可以存放1000×1000×1000条用户记录。但实际情况是每个页面不是全部都是用户记录，可能填不满或者是有其他内容，所以B+树高度一般就是2到4层，但是因为InnoDB存储引擎默认将根节点常驻内存，所以不需要进行页面置换，所以查找某一行记录需要进行磁盘I&#x2F;O的次数最多为1到3次。</p>
+<h2 id="1-6-B-树比B树的好处"><a href="#1-6-B-树比B树的好处" class="headerlink" title="1.6 B+树比B树的好处"></a>1.6 B+树比B树的好处</h2><p>B+树优于B树的根本原因就是B+树只在叶子节点存储数据项记录，非叶子节点仅用于索引，而B树在非叶子节点既保存索引，也存储数据项记录，叶子节点只保存数据记录。</p>
+<ol>
+<li><p>B+树的磁盘读写代价更低</p>
+<p>B树的非叶子节点中也存储了部分用户数据记录，需要占用一定的页面空间，因此非叶子节点就存储不了太多目录项记录，因此到叶子节点那一层的指针就少，树就高了。而B+树将数据项记录都存放在叶子节点，这样相对来说，上面页面中可以容纳的目录项个数就多，树就低了，因此需要的磁盘I&#x2F;O就少了。</p>
+</li>
+<li><p>B+树的查询效率更加稳定</p>
+<p>B+树只需要查到最后一层的某些页面，然后逐个遍历(记录与记录之间是单向链表的形式，页面和页面之间是双向链表的形式)，而B树中非叶子节点中也可能存在数据项，最差的情况可能需要将整个B树的节点都遍历一遍。</p>
+</li>
+</ol>
+<h2 id="1-7-Hash索引和B-树索引的区别"><a href="#1-7-Hash索引和B-树索引的区别" class="headerlink" title="1.7 Hash索引和B+树索引的区别"></a>1.7 Hash索引和B+树索引的区别</h2><p>Memory存储引擎默认采用Hash索引，InnoDB存储引擎默认采用B+树索引。</p>
+<ol>
+<li>Hash索引不能进行范围查找，<code>只能精确查找</code>，B+树可以。因为Hash索引指向的数据是无序的，而B+树的每个叶子节点中都是一个个有序的链表。</li>
+<li>Hash索引不支持ORDER BY 排序，因为Hash索引指向的数据是无序的</li>
+<li>Hash索引不支持联合索引的最左侧原则(联合索引的部分索引无法使用)，因为Hash索引在<code>计算Hash值的时候是将索引键合并后再一起计算hash值</code>，而不会针对每个索引都计算Hash值。</li>
+</ol>
+<h1 id="2-MyISAM中的索引"><a href="#2-MyISAM中的索引" class="headerlink" title="2.MyISAM中的索引"></a>2.MyISAM中的索引</h1><p>都是非聚簇索引，因为将索引和数据分开存储。索引的叶子节点存储的是<code>主键值+数据记录地址</code></p>
+<p><img src="/image/mysql/mysql10.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>底层也是使用的B+树</p>
+<h1 id="3-索引的声明和使用"><a href="#3-索引的声明和使用" class="headerlink" title="3.索引的声明和使用"></a>3.索引的声明和使用</h1><p><strong>索引的分类</strong>：</p>
+<ul>
+<li><p><font color='red'><strong>按照功能逻辑上分有：</strong></font></p>
+<ul>
+<li><p><font color='blue'>普通索引</font></p>
+<p>不附加任何约束条件，只创建索引，就是为了提高查询效率</p>
+</li>
+<li><p><font color='blue'>唯一索引</font></p>
+<p>使用UNIQUE参数可以设置索引为唯一性索引，在创建唯一索引时限制该索引的值必须是唯一的，但允许有空值，一个表里可以有多个唯一索引。</p>
+</li>
+<li><p><font color='blue'>主键索引</font></p>
+<p>特殊的唯一索引，在唯一索引的基础上增加了不为空的约束，即NOT NULL+UNIQUE，一个表中最多有一个主键索引</p>
+</li>
+<li><p><font color='blue'>全文索引</font></p>
+<p>使用参数FULLTEXT设置索引为全文索引，查询数据量较大的字符串类型的字段时，使用全文索引可以提高查询速度</p>
+</li>
+</ul>
+</li>
+<li><p><font color='red'><strong>按照物理实现方式分：</strong></font></p>
+<ul>
+<li><font color='blue'>聚簇索引(其实就是主键索引)</font></li>
+<li><font color='blue'>非聚簇索引</font></li>
+</ul>
+</li>
+<li><p><font color='red'><strong>按照作用字段个数分：</strong></font></p>
+<ul>
+<li><p><font color='blue'>单列索引</font></p>
+<p>在表的单个字段上创建索引，单列索引只根据该字段进行索引，一个表可以有多个单列索引。单列所以可以是普通索引&#x2F;唯一所以&#x2F;全文索引</p>
+</li>
+<li><p><font color='blue'>联合索引</font></p>
+<p>即多列索引，在表的多个字段组合上创建一个索引，该索引指向创建时对应的多个字段，可以使用这几个字段一起查询，查询中至少使用这些字段的第一个字段，索引才会生效。使用组合索引遵循最左前缀集合。</p>
+<p>先根据第一个字段进行查询，如果第一个字段相同，再根据第二个字段，如果第二个也相同，再根据第三个字段</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="4-索引的创建"><a href="#4-索引的创建" class="headerlink" title="4.索引的创建"></a>4.索引的创建</h1><h2 id="4-1-隐式创建索引"><a href="#4-1-隐式创建索引" class="headerlink" title="4.1 隐式创建索引"></a>4.1 隐式创建索引</h2><p>在声明有主键约束，唯一性约束，外键约束的字段上会自动添加相关索引</p>
+<ol>
+<li><p>将表中一字段设置为主键</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create table tb_user5(<br>    -&gt; tb_id int primary key,<br>    -&gt; tb_name varchar(20)<br>    -&gt; );<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql15.png" srcset="/image/beautify/loading.gif" lazyload></p>
+</li>
+<li><p>外键、唯一性约束</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create table tb_user6(<br>    -&gt; tb_id int primary key,<br>    -&gt; tb_name varchar(20) unique,<br>    -&gt; tb5_id int,<br>    -&gt; constraint tb6_tb5_id foreign key(tb5_id) references tb_user5(tb_id)<br>    -&gt; );<br>Query OK, 0 rows affected (0.03 sec)<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql17.png" srcset="/image/beautify/loading.gif" lazyload></p>
+</li>
+</ol>
+<hr>
+<h2 id="4-2-显式创建索引"><a href="#4-2-显式创建索引" class="headerlink" title="4.2 显式创建索引"></a>4.2 显式创建索引</h2><ol>
+<li><p>创建普通索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create table tb_user7(<br>    -&gt; tb_id int,<br>    -&gt; tb_name varchar(20),<br>    -&gt; index idx_tb_id(tb_id)<br>    -&gt; );<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql16.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<ol start="2">
+<li>创建唯一索引</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create table tb_user8(<br>    -&gt; tb_id int,<br>    -&gt; tb_name varchar(20),<br>    -&gt; unique index uk_idx_tb_id(tb_id)<br>    -&gt; );<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql18.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>相对应字段也会有唯一性约束主键索引</p>
+</li>
+<li><p>主键索引</p>
+<p>就是创建主键的时候会自动生成索引</p>
+</li>
+<li><p>联合索引</p>
+<p>多个字段一起作为索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create table tb_user9( tb_id int, tb_name varchar(20),index mul_idx_tb_id(tb_id,tb_name) );<br>Query OK, 0 rows affected (0.03 sec)<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql19.png" srcset="/image/beautify/loading.gif" lazyload></p>
+</li>
+</ol>
+<h2 id="4-6-表已经创建成功后添加索引"><a href="#4-6-表已经创建成功后添加索引" class="headerlink" title="4.6 表已经创建成功后添加索引"></a>4.6 表已经创建成功后添加索引</h2><ol>
+<li>alter table … add …</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; alter table tb_user7 add index idx_id(tb_id); //普通索引<br>mysql&gt; alter table tb_user7 add unique index uk_idx_id(tb_id); //唯一索引<br>mysql&gt; alter table tb_user7 add index mul_idx_id(tb_id,tb_name);//联合索引<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>create index ….  on ….</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create index idx_id on tb_user7(tb_id);<br>mysql&gt; create unique index idx_id on tb_user7(tb_id);<br>mysql&gt; create index mul_idx_id on tb_user7(tb_id,tb_name);<br></code></pre></td></tr></table></figure>
+
+<h1 id="5-删除索引"><a href="#5-删除索引" class="headerlink" title="5.删除索引"></a>5.删除索引</h1><ol>
+<li>方式一：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">alter table 表名 drop index 索引名;<br></code></pre></td></tr></table></figure>
+
+<p>添加auto_increment约束字段的唯一索引不能被删除</p>
+<ol start="2">
+<li>方式二：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">drop index 索引名 on 表名;<br></code></pre></td></tr></table></figure>
+
+<h1 id="6-MySQL8-0新特性【降序索引】"><a href="#6-MySQL8-0新特性【降序索引】" class="headerlink" title="6.MySQL8.0新特性【降序索引】"></a>6.MySQL8.0新特性【降序索引】</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create table tb_user8(<br>    -&gt; a int,<br>    -&gt; b int,<br>    -&gt; index idx_a_b(a asc,b desc)<br>    -&gt; );<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql20.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p><code>Collation</code>那一列中A表示升序，D表示降序</p>
+<h1 id="7-MySQL8-0新特性【隐藏索引】"><a href="#7-MySQL8-0新特性【隐藏索引】" class="headerlink" title="7.MySQL8.0新特性【隐藏索引】"></a>7.MySQL8.0新特性【隐藏索引】</h1><p>如果将一个索引删除需要消耗系统过多的资源的时候，就不适合将这个索引删除，因此有隐藏索引，先将待删除的<code>索引设置为隐藏索引后，这个索引就不起作用了</code>，看看系统是否受到很大的影响，没有太大影响就可以将它删除。</p>
+<ol>
+<li>创建表时，添加隐藏索引</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; create table tb_user7(<br>    -&gt; tb_id int,<br>    -&gt; tb_name varchar(20),<br>    -&gt; index idx_tb_id(tb_id) invisiable //不可见<br>    -&gt; );<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>表已经创建，添加隐藏索引</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; alter table tb_user7 add index idx_id(tb_id) invisiable; <br></code></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>修改索引的可见性</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">//将索引修改为不可见<br>mysql&gt; alter table tb_user7 alter index idx_id(tb_id) invisiable; <br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>当索引被隐藏时，它的内容仍然和正常索引一样实时更新，只是不能用</p>
+</blockquote>
+<h1 id="8-适合创建索引的情况"><a href="#8-适合创建索引的情况" class="headerlink" title="8.适合创建索引的情况"></a>8.适合创建索引的情况</h1><ol>
+<li><p>字段的数值有唯一性的限制</p>
+</li>
+<li><p>频繁作为where查询条件的字段</p>
+</li>
+<li><p>经常group by和order by的列 (本来就需要排序或者分组)</p>
+<p>如果group by和order by 都有，创建一个联合索引，先写group by </p>
+</li>
+<li><p>update、delete的where条件列的查询的字段</p>
+</li>
+<li><p>DISTINCT字段需要创建索引</p>
+<p>DISTINCT的作用是对字段进行去重，如果创建了索引，相同的列都是在一起的，去重就更快</p>
+</li>
+<li><p>多表JOIN连接时创建索引</p>
+</li>
+<li><p>使用列的类型更小的字段创建索引</p>
+<p>一个页能容纳更多的记录</p>
+</li>
+<li><p>使用字符串前缀创建索引</p>
+<p>如果一个字符串要设置索引，由于字符串很长，就可以截取字段前面一部分内容创建索引，这就叫前缀索引，没有必要对全字创建索引</p>
+<p>create table shop(address varchar(120)  not null);</p>
+<p>alter table shop add index(address(12));</p>
+</li>
+<li><p>区分度高的列适合作为索引</p>
+</li>
+<li><p>使用最频繁的列适合放到联合索引的左侧</p>
+</li>
+<li><p>在多个字段都要创建索引时，联合索引优于单列索引</p>
+</li>
+</ol>
+<h1 id="9-不适合创建索引的情况"><a href="#9-不适合创建索引的情况" class="headerlink" title="9. 不适合创建索引的情况"></a>9. 不适合创建索引的情况</h1><ol>
+<li><p>数据量小的表最好不要使用索引</p>
+</li>
+<li><p>在where中使用不到的字段不要设置索引</p>
+</li>
+<li><p>有大量重复数据的列不要建立索引</p>
+<p>需要多次访问很多页</p>
+</li>
+<li><p>不要对经常更新的表创建过多索引</p>
+</li>
+<li><p>不建议用无序的值作为索引</p>
+</li>
+<li><p>最好删除不再使用或者很少使用的索引</p>
+</li>
+<li><p>不要定义冗余或者重复的索引</p>
+</li>
+</ol>
+<p>索引是一把双刃剑，可以提高查询效率，但也会降低插入和更新的速度并占用磁盘空间。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/" class="print-no-link">#数据库高级</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>MySQL-索引</div>
+      <div>https://vickkkyz.fun/2022/03/25/计算机/mysql/索引/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Vickkkyz</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/27/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E8%8C%83%E5%BC%8F/" title="MySQL-范式">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">MySQL-范式</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/24/Problems/%E6%AF%8F%E5%A4%A9%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%8A%80%E5%B7%A7/" title="每天一个小技巧~">
+                        <span class="hidden-mobile">每天一个小技巧~</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+<!-- Load TweenLite --> <script src="https://cdn.jsdelivr.net/npm/greensock@1.20.2/dist/TweenLite.js"></script>
+<!-- Copyrighted cubism SDK --> <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script> <!-- Load Pixi (dependency for cubism 2/4 integrated loader) --> <script src="https://cdn.jsdelivr.net/npm/pixi.js@5.3.6/dist/pixi.min.js"></script> <!-- Load cubism 4 integrated loader --> <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/cubism4.min.js"></script>
+<!-- Load pio and alternative loader --> <link href="https://cdn.jsdelivr.net/gh/vickkkyz/vickkkyz.github.io@2.0/css/pio.css" rel="stylesheet" type="text/css"/> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio_sdk4.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/load.js"></script>
+<!-- 页脚添加网站运行时间 --> <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <a href="https://icp.gov.moe/?keyword=20249336" target="_blank">萌ICP备20249336号</a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/backgroundize.js"></script><!-- hexo injector body_end end --></body>
+</html>

@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 通过cdn引入霞鹭文楷字体 -->
+  <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+    onload="this.media='all'">
+  <link rel="apple-touch-icon" sizes="76x76" href="/image/beautify/favicon.ico">
+  <link rel="icon" href="/image/beautify/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Vickkkyz">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1.为什么只有堆和方法区内存需要垃圾收集器进行回收对于程序计数器、虚拟机栈、本地方法栈是线程私有的，三个区域随线程而生，随线程而灭。栈中的栈帧随着方法的进入和退出有条不紊的执行着出栈和入栈的操作。每个栈帧中将要分配多少内存在编译期间就可以确定，因此这几个区域的内存分配和回收具有确定性，因此不需要编写复杂的垃圾收集算法，一个方法执行完，栈帧出栈后，即被销毁。内存就会被回收。 而堆和方法区分配的内存具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM-垃圾收集器与内存分配策略">
+<meta property="og:url" content="https://vickkkyz.fun/2022/03/24/Java/JVM/3.%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%92%8C%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/index.html">
+<meta property="og:site_name" content="Vickkkyz&#39;s Home">
+<meta property="og:description" content="1.为什么只有堆和方法区内存需要垃圾收集器进行回收对于程序计数器、虚拟机栈、本地方法栈是线程私有的，三个区域随线程而生，随线程而灭。栈中的栈帧随着方法的进入和退出有条不紊的执行着出栈和入栈的操作。每个栈帧中将要分配多少内存在编译期间就可以确定，因此这几个区域的内存分配和回收具有确定性，因此不需要编写复杂的垃圾收集算法，一个方法执行完，栈帧出栈后，即被销毁。内存就会被回收。 而堆和方法区分配的内存具">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/3.1.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/3.2.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/3.3.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/jvm/3.4.png">
+<meta property="article:published_time" content="2022-03-24T12:34:08.000Z">
+<meta property="article:modified_time" content="2023-01-26T09:03:03.071Z">
+<meta property="article:author" content="Vickkkyz">
+<meta property="article:tag" content="总结">
+<meta property="article:tag" content="jvm">
+<meta property="article:tag" content="垃圾收集器">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://vickkkyz.fun/image/jvm/3.1.png">
+  
+  
+  
+  <title>JVM-垃圾收集器与内存分配策略 - Vickkkyz&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/cloudedGlass.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vickkkyz.fun","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"🍭","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/image/beautify/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><div id="web_bg"></div><!-- hexo injector body_begin end -->
+  
+
+  <!--浏览器搞笑标题-->
+  <script type="text/javascript" src="\js\FunnyTitle.js"></script>
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>VickkkyzのBlog(*/ω＼*)</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>时间轴</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/image/homePage/paperDefault5.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="JVM-垃圾收集器与内存分配策略"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-24 20:34" pubdate>
+          2022年3月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">JVM-垃圾收集器与内存分配策略</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1-为什么只有堆和方法区内存需要垃圾收集器进行回收"><a href="#1-为什么只有堆和方法区内存需要垃圾收集器进行回收" class="headerlink" title="1.为什么只有堆和方法区内存需要垃圾收集器进行回收"></a>1.为什么只有堆和方法区内存需要垃圾收集器进行回收</h1><p>对于程序计数器、虚拟机栈、本地方法栈是线程私有的，三个区域随线程而生，随线程而灭。栈中的栈帧随着方法的进入和退出有条不紊的执行着出栈和入栈的操作。每个栈帧中将要分配多少内存在编译期间就可以确定，因此这几个区域的内存分配和回收具有确定性，因此不需要编写复杂的垃圾收集算法，<strong>一个方法执行完，栈帧出栈后，即被销毁。内存就会被回收。</strong></p>
+<p>而堆和方法区分配的内存具有不确定性，只有当处于运行期间时，我们才知道到底创建了多少对象，需要在运行期间给这些对象分配内存。因此这部分区域的<strong>内存分配和回收是动态的</strong>。</p>
+<h1 id="2-回收堆"><a href="#2-回收堆" class="headerlink" title="2.回收堆"></a>2.回收堆</h1><p><strong>即判断对象是否可以被回收</strong></p>
+<h2 id="2-1-引用计数算法"><a href="#2-1-引用计数算法" class="headerlink" title="2.1 引用计数算法"></a>2.1 引用计数算法</h2><p><strong>原理：</strong>在对象中添加一个引用计数器，每当有一个地方引用它时，计数器就加一，当引用失效时，计数器就减一，当计数器的值为0时表示这个对象不再被引用，可以被回收。</p>
+<p>**优点:**原理简单，引用计数器只占了很小一部分空间，效率高。</p>
+<p><strong>缺点：</strong>会出现对象之间循环引用的问题。当两个对象互相引用，并且除此之外再也没有其他对象引用他们，以后垃圾回收也不会回收他们，因为他们的引用计数器值都是1，但实际上他们没有再被其他对象引用，是需要回收的。</p>
+<h2 id="2-2-可达性分析算法"><a href="#2-2-可达性分析算法" class="headerlink" title="2.2 可达性分析算法"></a>2.2 可达性分析算法</h2><p><strong>原理：</strong>通过一系列称为”GC Root”的根对象作为起始节点集合，从这些节点开始根据引用关系向下搜索，如果从GC Root到这个对象不可达时，没有引用链相连，说明这个对象是不可能再被使用的，就会被判定为可回收的对象。</p>
+<p><strong>哪些对象可以作为GC Root对象？</strong></p>
+<ul>
+<li>栈帧中局部变量表中引用的对象</li>
+<li>在方法区中常量引用的对象。如字符串常量池中的String Table中的引用。String s1 &#x3D; “abc”;</li>
+<li>方法区中类静态属性引用的变量。比如public static String str &#x3D; “abc” ; 静态成员变量是str，对象是”abc” </li>
+<li>本地方法栈中native方法引用的对象</li>
+<li>java虚拟机内部的引用，如基本数据类型对应的Class对象，异常对象(NullPointException)、以及系统类加载器</li>
+<li>被同步锁（synchronized关键字）持有的对象</li>
+<li>反应java虚拟机内部情况的JMXBean、JVMTI中注册的回调、本地代码缓存</li>
+<li>如果只针对堆中某一部分进行垃圾收集，那么在这个部分中可能有被其他部分对象所引用，为了维护可达性分析的正确性，这时需要将其他部分的那些对象也加入GC Roots中。</li>
+</ul>
+<h2 id="2-3-引用"><a href="#2-3-引用" class="headerlink" title="2.3 引用"></a>2.3 引用</h2><p><strong>强引用：</strong>只要强引用关系存在，垃圾收集器永远不会回收被引用的对象。String str &#x3D; new String(“Reference”);  GC Roots对象的引用是强引用</p>
+<p><strong>软引用：</strong>没有被GC Root对象直接引用（即没有被强引用，如果间接被GC root引用也不行），但被软引用引用。如果内存空间足够，垃圾回收器就不会回收它，如果内存空间不足了，就会回收这些对象的内存。SoftReference<String> sr &#x3D; new SoftReference<String>(new String(“CacheData”));</p>
+<p><strong>弱引用：</strong>没有被GC Root对象直接引用（即没有被强引用，如果间接被GC root引用也不行），但被弱引用引用。无论当前堆内存是否足够，垃圾收集器都会将只被弱引用关联的对象回收。WeakReference<String> wr &#x3D; new WeakReference<String>(new String(“CacheData”));</p>
+<p><strong>虚引用：</strong>无法通过虚引用来获得一个对象实例，为一个对象设置虚引用关联的唯一目的知识为了能在这个对象被收集器回收时收到一个系统通知。</p>
+<p><strong>引用队列：</strong>软引用、弱引用本身也是一个对象，他们在创建时被分配了一个引用队列，如果引用的对象被回收后，需要将它们加入引用队列，只需要遍历引用队列就可以将它们回收。</p>
+<h2 id="2-4-finalize"><a href="#2-4-finalize" class="headerlink" title="2.4 finalize()"></a>2.4 finalize()</h2><p>要宣告一个对象死亡，最多会经历两次标记，第一次是可达性分析，当对象在可达性算法中被判定为不可达，这是第一次标记<strong>，这时虚拟机会看这个对象的finalize方法()是否被调用过，如果以前调用过了，那这个对象会直接被判定为可回收</strong>，如果没有，虚拟机会调用这个方法，并把对象加入一个队列中，在某一时间虚拟机会对队列中的对象进行第二次遍历**(虚拟机并不一定会等finalize()执行结束)**，如果在finalize()方法中这个对象此时被其他对象引用，则这个对象不会被回收，否则会被标记，回收（第二次）。</p>
+<h1 id="3-回收方法区"><a href="#3-回收方法区" class="headerlink" title="3.回收方法区"></a>3.回收方法区</h1><p>方法区的垃圾收集主要是<code>回收废弃的常量</code>和<code>不再使用的类型(类)</code></p>
+<p>类需要同时满足下面 3 个条件才能算是 <strong>“无用的类”</strong> ：</p>
+<ul>
+<li>该类所有的实例都已经被回收，也就是 Java 堆中不存在该类的任何实例。</li>
+<li>加载该类的 <code>ClassLoader</code> 已经被回收。</li>
+<li>该类对应的 <code>java.lang.Class</code> 对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
+</ul>
+<p>虚拟机可以对满足上述 3 个条件的无用类进行回收，这里说的仅仅是“可以”，而并不是和对象一样不使用了就会必然被回收。</p>
+<h1 id="4-垃圾收集算法"><a href="#4-垃圾收集算法" class="headerlink" title="4.垃圾收集算法"></a>4.垃圾收集算法</h1><p>下面的算法都属于追踪式垃圾收集算法。</p>
+<p><strong>Full GC：</strong>整堆收集。整个java堆和方法区的垃圾收集。</p>
+<p><strong>Partial GC :</strong> 部分收集。不是收集完整的java堆</p>
+<ul>
+<li>Minor GC&#x2F;Young GC（只对新生代的垃圾收集）</li>
+<li>Major GC&#x2F;Old GC（只对老年代的垃圾收集）</li>
+<li>Mixed GC（收集整个新生代以及部分来年代的垃圾收集）</li>
+</ul>
+<h2 id="4-1-标记-清除算法"><a href="#4-1-标记-清除算法" class="headerlink" title="4.1 标记-清除算法"></a>4.1 标记-清除算法</h2><p>顾名思义，先标记，后清除。即先将需要回收的对象标记出来（也可以标记存活对象，回收没被标记的对象），标记完成后，统一回收被标记的对象。</p>
+<p><strong>缺点：</strong>1.执行效率不稳定。当java堆中有大量需要回收的对象时，标记这个操作需要耗费大量时间，因为回收的对象多，所以回收也会耗费很多时间。2.内存碎片会变多。标记清除之后会产生大量不连续的内存碎片，空间碎片太多会导致以后分配大对象时由于每个空间都不足以满足大对象的内存空间，无法找到连续内存而提前触发垃圾收集。</p>
+<h2 id="4-2-标记-复制算法"><a href="#4-2-标记-复制算法" class="headerlink" title="4.2 标记-复制算法"></a>4.2 标记-复制算法</h2><p>标记-复制算法通常被简称为<strong>复制算法</strong>。</p>
+<p>Fenichel提出的<strong>半区复制</strong></p>
+<p>将堆内存一比一划分为两个大小相等的区域，每次只使用其中的一块，当这一块的内存用完了就将还存活的对象复制到另一块，然后把这一块全部清空。避免了内存碎片的产生，但是当这个区域存活的对象非常多时，复制的效率就比较低。</p>
+<p>Andrew Appel提出了改进方案</p>
+<p><strong>Appel式回收</strong>：使用分代的垃圾收集机制，HotSpot虚拟机将新生代划分为Eden区，Survivor From区，Survivor To区。HotSpot虚拟机默认Eden, Survivor From, Survivor To的大小比例是8:1:1   每次分配内存时只使用Eden区，Survivor From区，当内存空间不足时，会触发一次Minor GC，通过GC Roots的引用链看包含哪个对象，即这个对象就不会被回收，虚拟机会将它们复制到Survivor To中，并将它们的年龄+1 (一开始是0)，然后一次性将Eden区，Survivor From区的可回收对象清空。然后交换Survivor From区和Survivor To，逐渐地，当To区不足以容纳一次Minor GC 之后存活的对象时，检查哪个年龄超过阈值15 或者比较大的年龄，将这些对象复制到老年代中。</p>
+<p>有时候新生代内存十分紧张时，To区的对象不必等到年龄超过15，而是直接晋升到老年代。当需要分配内存的对象是一个大对象时，也直接进入老年代。</p>
+<p>当老年代内存不足时，会再次触发一次Minor GC，若空间仍然不足，则触发Full GC。当触发Full GC 后内存空间还是不足，则触发<strong>OOM</strong>内存溢出异常。</p>
+<p>HotSpot虚拟机的新生代垃圾收集器均采用这个策略来设计新生代的内存布局。</p>
+<h2 id="4-3-标记-整理算法"><a href="#4-3-标记-整理算法" class="headerlink" title="4.3 标记-整理算法"></a>4.3 标记-整理算法</h2><p>标记的动作和标记-清除中的是一样的，先标记存活对象，然后将存活对象整体移动到内存空间的一端，直接清除边界以外的内存。</p>
+<p>移动操作是必须全程暂停用户应用程序，<code>Stop The World！</code></p>
+<h2 id="4-4-总结"><a href="#4-4-总结" class="headerlink" title="4.4 总结"></a>4.4 总结</h2><p><strong>在新生代中，每次收集都会有大量对象死去，所以可以选择”标记-复制“算法，只需要付出少量对象的复制成本就可以完成每次垃圾收集。而老年代的对象存活几率是比较高的，而且没有额外的空间对它进行分配担保，所以我们必须选择“标记-清除”或“标记-整理”算法进行垃圾收集。</strong> </p>
+<p><strong>标记-清除算法</strong>和<strong>标记-整理算法</strong>各有缺点。</p>
+<p>标记清除算法中，容易产生大量的内存碎片，导致空间碎片化，这可以通过”分区空闲分配链表”来解决，将碎片空间进行逻辑连接，因此在标记清除算法中内存分配和访问是很耗时的。标记整理算法需要STW来将存活对象移动到堆的一侧，并更新所有引用这些对象的地方，不过这个停顿时间只有在垃圾收集时才会触发，这个是标记整理算法耗时的地方。</p>
+<p><strong>由于内存分配和访问相比垃圾收集频率高得多</strong>，所以使用标记清除算法的程序的吞吐量是小于使用标记整理算法的。</p>
+<p>所以大部分垃圾收集器对老年代中对象的回收都是基于标记-整理算法。</p>
+<h1 id="5-垃圾收集器"><a href="#5-垃圾收集器" class="headerlink" title="5.垃圾收集器"></a>5.垃圾收集器</h1><ul>
+<li><p>新生代垃圾收集器：Serial收集器、ParNew收集器、Parallel Scavenge收集器</p>
+</li>
+<li><p>老年代垃圾收集器：CMS收集器、Serial Old收集器、Parallel Old收集器</p>
+</li>
+<li><p>全堆垃圾收集器：G1</p>
+</li>
+</ul>
+<h2 id="5-1-Serial收集器"><a href="#5-1-Serial收集器" class="headerlink" title="5.1 Serial收集器"></a>5.1 Serial收集器</h2><p>Serial（串行）收集器。这个收集器是<strong>单线程工作</strong>的<strong>新生代</strong>垃圾收集器，是专门收集新生代的垃圾收集器，它只使用一个处理器或一条垃圾收集线程去进行垃圾收集工作，并且它在进行垃圾收集时，必须暂停其他所有工作线程，直到它收集结束。<code>Stop The World！</code></p>
+<p><strong>优点：</strong>与其他收集器的单线程相比，Serial收集器简单而高效，它是所有收集器里额外内存消耗最小的，没有线程交互的开销，所以垃圾收集的效率也比较高。</p>
+<p>它是HotSpot虚拟机运行在客户端模式下的默认新生代收集器。</p>
+<p><img src="/image/jvm/3.1.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h2 id="5-2-ParNew收集器"><a href="#5-2-ParNew收集器" class="headerlink" title="5.2 ParNew收集器"></a>5.2 ParNew收集器</h2><p>ParNew是运行在服务端模式下的HotSpot虚拟机中的垃圾收集器，是专门收集新生代的垃圾收集器。ParNew收集器使用<strong>多条线程</strong>进行垃圾收集，除此之外，和Serial收集器几乎一样。</p>
+<p>ParNew收集器和CMS收集器（老年代）配合工作，后来ParNew合并进了CMS收集器中，称为了CMS专门处理新生代的部分。</p>
+<p><img src="/image/jvm/3.2.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h2 id="5-3-Parallel-Scavenge收集器"><a href="#5-3-Parallel-Scavenge收集器" class="headerlink" title="5.3 Parallel Scavenge收集器"></a>5.3 Parallel Scavenge收集器</h2><p>Parallel Scavenge收集器是一款基于标志复制算法的<strong>吞吐量优先</strong>的新生代垃圾收集器，也可以使用多条线程进行垃圾收集工作，但是这款收集器的目标是<strong>达到一个可控制的吞吐量</strong>，而不是追求垃圾收集的时用户线程的停顿时间。吞吐量&#x3D;运行用户代码时间&#x2F;(运行用户代码时间+运行垃圾收集时间)</p>
+<h2 id="5-4-Serial-Old收集器"><a href="#5-4-Serial-Old收集器" class="headerlink" title="5.4 Serial Old收集器"></a>5.4 Serial Old收集器</h2><p><strong>Serial 收集器的老年代版本</strong>，它同样是一个单线程收集器。（在服务端模式下）它主要有两大用途：一种用途是在 JDK1.5 以及以前的版本中与 Parallel Scavenge 收集器搭配使用，另一种用途是作为 CMS 收集器发生失败时的后备方案。</p>
+<h2 id="5-5-Parallel-Old收集器"><a href="#5-5-Parallel-Old收集器" class="headerlink" title="5.5 Parallel Old收集器"></a>5.5 Parallel Old收集器</h2><p><strong>Parallel 收集器的老年代版本</strong>，支持多线程并行收集，基于标记整理算法实现。JDK6时开始提供。</p>
+<p><img src="/image/jvm/3.3.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h2 id="5-6-CMS收集器"><a href="#5-6-CMS收集器" class="headerlink" title="5.6 CMS收集器"></a>5.6 CMS收集器</h2><p><strong>CMS（Concurrent Mark Sweep）收集器是一种以获取最短回收停顿时间为目标的老年代收集器。</strong></p>
+<p>CMS收集器是基于<strong>标记清除算法</strong>的垃圾收集器。</p>
+<ol>
+<li><p><strong>初始标记</strong></p>
+<p>标记一下GC Roots能直接关联到的对象，速度比较快。需要STW</p>
+</li>
+<li><p><strong>并发标记</strong></p>
+<p>从GC Roots的直接关联对象开始遍历整个对象图，耗时，但不需要STW</p>
+</li>
+<li><p><strong>重新标记</strong></p>
+<p>修正并发标记期间因用户线程继续运作导致标记产生变动的那部分对象的标记记录（增量更新），停顿时间稍微大于初始标记，远小于并发标记的时间，需要STW</p>
+<p><em>注：增量更新</em></p>
+</li>
+<li><p><strong>并发清除</strong></p>
+<p>清理删除掉标记阶段判断已经死亡的对象，因为CMS采用的是标记清除算法，所以不需要移动存活对象，因此这个阶段可以与用户线程同时并发，不需要STW。</p>
+<p>但是在这个过程会产生<strong>浮动垃圾</strong>，即在并发标记和并发清理阶段与用户线程并发的时候用户线程产生的新的垃圾对象，由于并发清除阶段新垃圾没有被标记，因此<strong>并发清理阶段的垃圾CMS无法在这次垃圾收集时处理，只能等到下次垃圾收集时再清理</strong>。</p>
+</li>
+</ol>
+<p>缺点：</p>
+<p><strong>1.它使用的回收算法-“标记-清除”算法会导致收集结束时会有大量空间碎片产生。</strong></p>
+<p><strong>2.CMS收集器对处理器资源十分敏感。</strong>在并发阶段，它虽然不会导致用户线程停顿，但是却会因占用了一部分线程而导致应用程序变慢，降低总吞吐量，CMS默认启动的回收线程数等于（CPU数量+3）&#x2F;4，所以CPU个数越少，CMS对用户线程的影响就越大。</p>
+<p>当CMS运行期间预留的内存无法满足新加进老年代的对象的大小（也可能是内存碎片），就会出现“并发失败”，虚拟机会启动planB：冻结用户线程，临时启用Serial Old收集器重新对老年代进行垃圾收集，不过停顿时间就变长了。</p>
+<p>3.浮动垃圾</p>
+<p><img src="/image/jvm/3.4.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h2 id="5-7-G1收集器"><a href="#5-7-G1收集器" class="headerlink" title="5.7 G1收集器"></a>5.7 G1收集器</h2><p>G1收集器是一款面向<strong>全堆</strong>进行的、面向服务端应用的垃圾收集器。它不再坚持固定大小以及固定数量的分代区域划分，而是**把连续的堆内存划分为大小相等的独立区域(Region)**，每次垃圾收集到的内存空间都是Region的整数倍，所以它是基于Region的堆内存布局的垃圾收集器。它在延迟可控的情况下获得尽可能高的吞吐量。适用于大内存的堆容量。</p>
+<ol>
+<li><p><strong>初始标记</strong></p>
+<p>标记一下GC Roots能直接关联到的对象，并且修改TAMS指针的值，让下一个阶段的并发标记可以使用正确的区域来分配内存。需要STW，但是时间很短。</p>
+<p><em>注：TAMS指针：Top at Mark Start指针，每一个Region都有这两个指针，把Region的一部分空间划分出来用于新的对象分配内存，这两个指针用来标记这个范围，G1默认这个区域的对象都是存活的。</em></p>
+</li>
+<li><p><strong>并发标记</strong></p>
+<p>从GC Roots对象开始对堆中对象进行可达性分析，递归扫描整个堆里的对象图，标记要回收的对象，这个操作和用户线程并发，对象的引用关系可能会变化，因此收集器通过原始快照算法（SATB）得到引用改变的对象，重新标记。不需要STW</p>
+<p><em>注：原始快照：</em></p>
+</li>
+<li><p><strong>最终标记</strong></p>
+<p>处理并发标记期间未处理完的STAB记录，需要STW</p>
+</li>
+<li><p><strong>筛选回收</strong></p>
+<p>根据优先级列表，优先回收价值收益最大的那些Region，这些Region中剩余的少量存活对象将被复制到一个空的Region<strong>（标记-复制算法）</strong>，然后对这些Region一次性全部回收，垃圾收集器会开启多条垃圾收集线程。需要STW</p>
+</li>
+</ol>
+<p><strong>为什么要将堆划分成一个一个的Region呢？</strong></p>
+<p>这是因为垃圾收集器设计者想要建立起<strong>“停顿预测模型”</strong>（指支持指定在M毫秒内，消耗在垃圾收集上的时间大概率不超过N毫秒），即垃圾收集器去跟踪每个Region里面的垃圾堆积的“价值”大小，价值即回收所获得的空间大小以及回收所需要的时间的经验值，然后在后台维护一个优先级列表，每次根据用户设定允许的收集停顿时间N，优先处理回收价值收益最大的那些Region，Mixed GC（这也是Garbage First名字的由来）</p>
+<p><strong>G1是如何解决跨Region引用的问题？</strong></p>
+<p>通过使用卡表实现的记忆集。卡表可以是一个字节数组，java堆被分成许多个特定大小（数组中每个元素的大小）的内存块，每一个块就是一个卡页，每个卡表对应一个卡页。G1的每个Region都维护一个记忆集（哈希表，key是其他Region的起始地址，value是集合，存储卡表的索引），它会记录其他Region指向自己的指针，并标记这些指针在哪些卡页&#x2F;卡表的范围内。记忆集可能会占整个堆容量的20%甚至更多。</p>
+<p>Region中还有一个特殊的Humongous区域，专门用来存储大对象（G1认为只要超过了Region容量的一般的对象就是大对象），Humongous Region被看做老年代。</p>
+<p>G1仍然保留新生代和老年代，但是他们不再是固定的了，而是一系列区域的动态集合。</p>
+<h2 id="5-8-Shenandoah收集器"><a href="#5-8-Shenandoah收集器" class="headerlink" title="5.8 Shenandoah收集器"></a>5.8 Shenandoah收集器</h2><p>Shenandoah收集器与G1很像，但有几点不同：</p>
+<ol>
+<li>支持与用户线程并发的整理算法。</li>
+<li>默认不使用分代收集</li>
+<li>不使用记忆集，而是“<strong>连接矩阵</strong>”的全局数据结构来记录跨Region的引用关系。</li>
+</ol>
+<p>Shenandoah收集器的工作阶段分为</p>
+<ul>
+<li><p>初始标记</p>
+<p>标记一下GC Roots能直接关联到的对象。需要STW</p>
+</li>
+<li><p><strong>并发标记</strong></p>
+<p>遍历对象图，标记出全部可达的对象，与用户线程并发。不需要STW</p>
+</li>
+<li><p>最终标记</p>
+<p>处理并发标记期间未处理完的STAB记录，G1的筛选回收中的<em>根据优先级列表，优先回收价值收益最大的那些Region，构成一个回收集</em>合并到了最终标记中。需要STW</p>
+</li>
+</ul>
+<p>前三步和G1一样</p>
+<ul>
+<li><p>并发清理</p>
+<p>清理那些整个Region中连一个存活对象都没有的Region。</p>
+</li>
+<li><p><strong>并发回收</strong></p>
+<p>把回收集中Region中的少量存活对象复制到其他未使用的Region中。这个阶段与G1不同的是G1需要STW，冻结用户线程，而Shenandoah收集器这阶段可以与用户线程并发执行。Shenandoah通过读屏障和转发指针”Brooks Pointers”来实现并发。</p>
+<p><em>Brooks Pointers：在原有对象布局结构的最前面统一新增一个新的引用字段Brooks Pointers，在正常不处于并发移动的情况下，该引用指向对象自己，当要进行移动对象的时候，只需要改变Brooks Pointers指针的值，即旧对象上转发指针的引用位置，使其指向新对象，就可以将所有对该对象的访问转发到新的副本上。只要旧对象的内存空间还在，则可以通过旧地址访问到新对象。</em></p>
+</li>
+<li><p>初始引用更新</p>
+<p>短暂的停顿时间确保所有并发回收阶段进行的收集器线程都已经完成分配给他们的对象移动任务。</p>
+</li>
+<li><p><strong>并发引用更新</strong></p>
+<p>按照物理内存地址的顺序，线性地搜索出引用类型，把旧值改为新值。</p>
+</li>
+<li><p>最终引用更新</p>
+<p>修正存在于GC Roots中的引用</p>
+</li>
+<li><p>并发清理</p>
+<p>现在整个回收集中没有存活的对象了，就调用一次并发清理，回收这些Region的内存空间。</p>
+</li>
+</ul>
+<h2 id="5-9-ZGC收集器"><a href="#5-9-ZGC收集器" class="headerlink" title="5.9 ZGC收集器"></a>5.9 ZGC收集器</h2><p>ZGC收集器是一款基于Region内存布局的，暂时不设置分代的，使用了读屏障、染色质真和内存多重映射等技术来实现可并发的标记-整理算法的，以低延迟为首要目标的一款垃圾收集器。</p>
+<p>ZGC的Region分为三种：1.小型Region：容量固定为2MB，用于放置小于256KB的小对象。2.中型Region：容量固定为32MB，用于放置大于等于256KB但小于4KB的对象。3.大型Region：容量不固定，可以动态变化，但必须为2MB的整数倍，用于存放4MB及以上的大对象，每个Region只存放一个大对象。</p>
+<p>ZGC使用读屏障和<strong>染色指针技术</strong>实现并发整理。</p>
+<p>ZGC收集器的工作过程</p>
+<ul>
+<li>并发标记</li>
+<li>并发预备重分配</li>
+<li>并发重分配</li>
+<li>并发重映射</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/JVM/" class="category-chain-item">JVM</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%80%BB%E7%BB%93/" class="print-no-link">#总结</a>
+      
+        <a href="/tags/jvm/" class="print-no-link">#jvm</a>
+      
+        <a href="/tags/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" class="print-no-link">#垃圾收集器</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>JVM-垃圾收集器与内存分配策略</div>
+      <div>https://vickkkyz.fun/2022/03/24/Java/JVM/3.垃圾收集器和内存分配策略/垃圾收集算法和垃圾收集器/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Vickkkyz</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/24/Java/JVM/2.java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%92%8C%E5%86%85%E5%AD%98%E5%BC%82%E5%B8%B8/%E7%AC%AC%E4%BA%8C%E7%AB%A0/" title="JVM-运行时数据区域">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JVM-运行时数据区域</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/24/Java/JVM/4.%E7%B1%BB%E6%96%87%E4%BB%B6/%E7%AC%AC%E5%85%AD%E7%AB%A0/" title="JVM-类文件结构">
+                        <span class="hidden-mobile">JVM-类文件结构</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+<!-- Load TweenLite --> <script src="https://cdn.jsdelivr.net/npm/greensock@1.20.2/dist/TweenLite.js"></script>
+<!-- Copyrighted cubism SDK --> <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script> <!-- Load Pixi (dependency for cubism 2/4 integrated loader) --> <script src="https://cdn.jsdelivr.net/npm/pixi.js@5.3.6/dist/pixi.min.js"></script> <!-- Load cubism 4 integrated loader --> <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/cubism4.min.js"></script>
+<!-- Load pio and alternative loader --> <link href="https://cdn.jsdelivr.net/gh/vickkkyz/vickkkyz.github.io@2.0/css/pio.css" rel="stylesheet" type="text/css"/> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio_sdk4.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/load.js"></script>
+<!-- 页脚添加网站运行时间 --> <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <a href="https://icp.gov.moe/?keyword=20249336" target="_blank">萌ICP备20249336号</a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/backgroundize.js"></script><!-- hexo injector body_end end --></body>
+</html>

@@ -1,0 +1,986 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 通过cdn引入霞鹭文楷字体 -->
+  <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+    onload="this.media='all'">
+  <link rel="apple-touch-icon" sizes="76x76" href="/image/beautify/favicon.ico">
+  <link rel="icon" href="/image/beautify/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Vickkkyz">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="数据库调优的步骤：  1.分析1.1 查看系统性能参数1SHOW [GLOBAL|SESSION] STATUS LIKE &amp;#x27;参数&amp;#x27;;  一些常用的性能参数如下： • Connections：连接MySQL服务器的次数。 • Uptime：MySQL服务器的上线时间。 • Slow_queries：慢查询的次数。 • Innodb_rows_read：Select查询返回的行数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL-数据库调优">
+<meta property="og:url" content="https://vickkkyz.fun/2022/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E5%8C%96/index.html">
+<meta property="og:site_name" content="Vickkkyz&#39;s Home">
+<meta property="og:description" content="数据库调优的步骤：  1.分析1.1 查看系统性能参数1SHOW [GLOBAL|SESSION] STATUS LIKE &amp;#x27;参数&amp;#x27;;  一些常用的性能参数如下： • Connections：连接MySQL服务器的次数。 • Uptime：MySQL服务器的上线时间。 • Slow_queries：慢查询的次数。 • Innodb_rows_read：Select查询返回的行数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql21.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql23.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql24.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql25.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql26.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql27.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql28.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql29.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql30.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql31.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql32.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql33.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql34.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql35.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql37.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql36.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql38.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql39.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql40.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql41.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql42.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql43.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql44.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql47.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql46.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql48.png">
+<meta property="og:image" content="https://vickkkyz.fun/image/mysql/mysql49.png">
+<meta property="article:published_time" content="2022-04-07T01:04:30.000Z">
+<meta property="article:modified_time" content="2023-01-26T08:58:41.397Z">
+<meta property="article:author" content="Vickkkyz">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="数据库高级">
+<meta property="article:tag" content="EXPLAIN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://vickkkyz.fun/image/mysql/mysql21.png">
+  
+  
+  
+  <title>MySQL-数据库调优 - Vickkkyz&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/cloudedGlass.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"vickkkyz.fun","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"🍭","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/image/beautify/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body><!-- hexo injector body_begin start --><div id="web_bg"></div><!-- hexo injector body_begin end -->
+  
+
+  <!--浏览器搞笑标题-->
+  <script type="text/javascript" src="\js\FunnyTitle.js"></script>
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>VickkkyzのBlog(*/ω＼*)</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>时间轴</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/image/homePage/paperDefault5.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="MySQL-数据库调优"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-04-07 09:04" pubdate>
+          2022年4月7日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          43 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">MySQL-数据库调优</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>数据库调优的步骤：</p>
+<p><img src="/image/mysql/mysql21.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h1 id="1-分析"><a href="#1-分析" class="headerlink" title="1.分析"></a>1.分析</h1><h2 id="1-1-查看系统性能参数"><a href="#1-1-查看系统性能参数" class="headerlink" title="1.1 查看系统性能参数"></a>1.1 查看系统性能参数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">SHOW [GLOBAL|SESSION] STATUS LIKE &#x27;参数&#x27;;<br></code></pre></td></tr></table></figure>
+
+<p>一些常用的性能参数如下：</p>
+<pre><code class="hljs">• Connections：连接MySQL服务器的次数。
+• Uptime：MySQL服务器的上线时间。
+• Slow_queries：慢查询的次数。
+• Innodb_rows_read：Select查询返回的行数
+• Innodb_rows_inserted：执行INSERT操作插入的行数
+• Innodb_rows_updated：执行UPDATE操作更新的行数
+• Innodb_rows_deleted：执行DELETE操作删除的行数
+• Com_select：查询操作的次数。
+• Com_insert：插入操作的次数。对于批量插入的 INSERT 操作，只累加一次。
+• Com_update：更新操作的次数。
+• Com_delete：删除操作的次数。
+</code></pre>
+<p>查询现在有多少条慢查询记录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; SHOW GLOBAL STATUS LIKE &#x27;%Slow_queries%&#x27;;<br>+---------------+-------+<br>| Variable_name | Value |<br>+---------------+-------+<br>| Slow_queries  | 0     |<br>+---------------+-------+<br>1 row in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<h2 id="1-2-统计SQL的查询成本"><a href="#1-2-统计SQL的查询成本" class="headerlink" title="1.2 统计SQL的查询成本"></a>1.2 统计SQL的查询成本</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">SHOW STATUS LIKE &#x27;last_query_cost&#x27;;<br></code></pre></td></tr></table></figure>
+
+<p>查询最近一次执行的SQL命令需要检索的页的个数。</p>
+<h1 id="2-定位执行慢的-SQL"><a href="#2-定位执行慢的-SQL" class="headerlink" title="2.定位执行慢的 SQL"></a>2.定位执行慢的 SQL</h1><p>如果我们在分析服务器状态时发现还是比较慢和卡顿，就需要找到执行比较慢的SQL。</p>
+<p>MySQL的慢查询日志用来记录在MySQL中响应时间超过阈值的语句，然后我们找到这些慢的SQL语句有针对性的记性优化。默认MySQL数据库没有开启慢查询日志，需要手动设置，<strong>如果不是调优需要，一般不要开启，因为会影响性能。</strong></p>
+<h2 id="2-1-开启慢查询日志参数"><a href="#2-1-开启慢查询日志参数" class="headerlink" title="2.1 开启慢查询日志参数"></a>2.1 开启慢查询日志参数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; show variables like &#x27;%slow_query_log%&#x27;;<br>+----------------+-------+<br>| Variable_name  | Value |<br>+----------------+-------+<br>| slow_query_log | OFF   |  //默认是关闭的<br>+----------------+-------+<br>1 row in set (0.00 sec)<br><br>mysql&gt; set global slow_query_log = on;<br>Query OK, 0 rows affected (0.00 sec)<br><br>mysql&gt; show variables like &#x27;%slow_query_log%&#x27;;<br>+---------------------+-------------------------------------------------+<br>| Variable_name       | Value                                           |<br>+---------------------+-------------------------------------------------+<br>| slow_query_log      | ON                                              |<br>| slow_query_log_file | /var/lib/mysql/iz2zeip0loevltpebhi0txz-slow.log |<br>+---------------------+-------------------------------------------------+<br>2 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<p>查看阈值<code>(执行时间超过这个阈值的SQL语句被认为是慢SQL)</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; show variables like &#x27;%long_query_time&#x27;;<br>+-----------------+-----------+<br>| Variable_name   | Value     |<br>+-----------------+-----------+<br>| long_query_time | 10.000000 |<br>+-----------------+-----------+<br>1 row in set (0.01 sec)<br><br>mysql&gt; set global long_query_time = 1;<br>Query OK, 0 rows affected (0.00 sec)<br><br>mysql&gt; show global variables like &#x27;%long_query_time%&#x27;;<br>+-----------------+----------+<br>| Variable_name   | Value    |<br>+-----------------+----------+<br>| long_query_time | 1.000000 |<br>+-----------------+----------+<br>1 row in set (0.01 sec)<br><br>mysql&gt; set long_query_time=1;<br>Query OK, 0 rows affected (0.00 sec)<br><br>mysql&gt; show variables like &#x27;%long_query_time%&#x27;;<br>+-----------------+----------+<br>| Variable_name   | Value    |<br>+-----------------+----------+<br>| long_query_time | 1.000000 |<br>+-----------------+----------+<br>1 row in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-2-慢查询日志分析工具"><a href="#2-2-慢查询日志分析工具" class="headerlink" title="2.2 慢查询日志分析工具"></a>2.2 慢查询日志分析工具</h2><p>MySQL提供了日志分析工具<code>mysqldumpslow</code>。通过mysqldumpslow 可以查看慢查询日志</p>
+<p><strong>mysqldumpslow 命令的具体参数如下</strong>：</p>
+<blockquote>
+<p>-a: 不将数字抽象成N，字符串抽象成S<br>-s: 是表示按照何种方式排序：<br>    c: 访问次数<br>    l: 锁定时间<br>    r: 返回记录<br>    t: 查询时间<br>    al:平均锁定时间<br>    ar:平均返回记录数<br>    at:平均查询时间 （默认方式）<br>    ac:平均查询次数<br>-t: 即为返回前面多少条的数据；<br>-g: 后边搭配一个正则匹配模式，大小写不敏感的；</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysqldumpslow -a -s t -t 5 /var/lib/mysql/iz2zeip0loevltpebhi0txz-slow.log<br></code></pre></td></tr></table></figure>
+
+<p>返回的就是慢SQL的语句，然后我们可以通过性能分析工具EXPLAIN来分析这个SQL语句</p>
+<hr>
+<p><strong>如何关闭慢查询日志？</strong></p>
+<p>MySQL服务器停止慢查询日志功能有两种方法：</p>
+<p>①方式1：永久性方式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">#配置文件<br>[mysqld]<br>slow_query_log=OFF<br></code></pre></td></tr></table></figure>
+
+<p>执行完后需要重启才能生效</p>
+<p>②方式2：临时性方式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">SET GLOBAL slow_query_log=off;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>如何删除慢查询日志</strong>？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysqladmin -uroot -p flush-logs slow //重建<br></code></pre></td></tr></table></figure>
+
+<p>重新生成慢查询日志文件</p>
+<h1 id="3-EXPLAIN分析慢SQL"><a href="#3-EXPLAIN分析慢SQL" class="headerlink" title="3.EXPLAIN分析慢SQL"></a>3.EXPLAIN分析慢SQL</h1><p>EXPLAIN查看SQL语句的执行计划，并不是真正执行这个SQL语句，而是看看如果要执行它，优化器会采取什么样的步骤</p>
+<p>MySQL 5.6.3以前只能 <code>EXPLAIN SELECT</code>；MYSQL 5.6.3以后就可以 <code>EXPLAIN SELECT，UPDATE，DELETE</code></p>
+<h2 id="3-1EXPLAIN各个字段"><a href="#3-1EXPLAIN各个字段" class="headerlink" title="3.1EXPLAIN各个字段"></a>3.1EXPLAIN各个字段</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">EXPLAIN SELECT ...<br>#或者<br>DESCRIBE SELECT ...<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql23.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<hr>
+<p>相关数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE TABLE s1 (<br>	 id INT AUTO_INCREMENT,<br>	 key1 VARCHAR(100),<br>	 key2 INT,<br>	 key3 VARCHAR(100),<br>	 key_part1 VARCHAR(100),<br>	 key_part2 VARCHAR(100),<br>	 key_part3 VARCHAR(100),<br>	 common_field VARCHAR(100),<br>	  PRIMARY KEY (id),<br>	  INDEX idx_key1 (key1),<br>	  UNIQUE INDEX idx_key2 (key2),<br>	  INDEX idx_key3 (key3),<br>	  INDEX idx_key_part(key_part1, key_part2, key_part3)<br>) ENGINE=INNODB CHARSET=utf8;<br><br>CREATE TABLE s2 (<br>	 id INT AUTO_INCREMENT,<br>	 key1 VARCHAR(100),<br>	 key2 INT,<br>	 key3 VARCHAR(100),<br>	 key_part1 VARCHAR(100),<br>	 key_part2 VARCHAR(100),<br>	 key_part3 VARCHAR(100),<br>	 common_field VARCHAR(100),<br>	  PRIMARY KEY (id),<br>	  INDEX idx_key1 (key1),<br>	  UNIQUE INDEX idx_key2 (key2),<br>	  INDEX idx_key3 (key3),<br>	  INDEX idx_key_part(key_part1, key_part2, key_part3)<br>) ENGINE=INNODB CHARSET=utf8;<br><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="①table"><a href="#①table" class="headerlink" title="①table"></a><strong>①table</strong></h3><p>EXPLAIN语句输出的每条记录都对应着某个单表的访问方法,该条记录的table列代表着该表的表名（有时不是真实的表名字，可能是简称）。有几个表就有几行记录结果</p>
+<p>比如：<code>EXPLAIN SELECT * from s1;</code></p>
+<p><img src="/image/mysql/mysql24.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p><code>EXPLAIN SELECT * FROM s1 INNER JOIN s2;</code>有两条记录结果，它的table列分别是s1、s2</p>
+<p><img src="/image/mysql/mysql25.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<hr>
+<h3 id="②id"><a href="#②id" class="headerlink" title="②id"></a><strong>②id</strong></h3><p>在一个大的查询语句中每个SELECT关键字都对应一个唯一的id</p>
+<p>如果有子查询，并且查询优化器没有将它优化为多表查询，一般就有多个id值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT key1 FROM s2) OR key3 = &#x27;a&#x27;;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql26.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<ul>
+<li><p>id如果相同，可以认为是一组，从上往下顺序执行</p>
+</li>
+<li><p>在所有组中，id值越大，优先级越高，越先执行</p>
+</li>
+<li><p>关注点：id号每个号码，表示一趟独立的查询, 一个sql的查询趟数越少越好</p>
+</li>
+</ul>
+<h3 id="③select-type"><a href="#③select-type" class="headerlink" title="③select_type"></a><strong>③select_type</strong></h3><p><img src="/image/mysql/mysql27.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h4 id="SIMPLE"><a href="#SIMPLE" class="headerlink" title="SIMPLE"></a><font color='red'>SIMPLE</font></h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">EXPLAIN <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> s1;<br></code></pre></td></tr></table></figure>
+
+<p>这个语句的类型是SIMPLE，连接查询<code>EXPLAIN SELECT * FROM s1 INNER JOIN s2;</code>也是 SIMPLE 类型</p>
+<h4 id="PRIMARY、UNION、UNION-RESULT"><a href="#PRIMARY、UNION、UNION-RESULT" class="headerlink" title="PRIMARY、UNION、UNION RESULT"></a><font color='red'>PRIMARY、UNION、UNION RESULT</font></h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">EXPLAIN <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> s1 <span class="hljs-keyword">UNION</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> s2;<br></code></pre></td></tr></table></figure>
+
+<p>对于包含UNION或UNION ALL或者子查询的大查询来说，它是由几个小查询组成的，最左边(或者是外层的表)的查询的select_type的值是primary，其余的小查询的select_type是UNION，使用临时表对UNION进行去重，针对该临时表的查询的select_type为UNION RESULT</p>
+<p><img src="/image/mysql/mysql28.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<blockquote>
+<p>SQL语句1   UNION&#x2F;UNION ALL  SQL语句2</p>
+<p>两个SQL语句执行的目标表的结构必须是一样的</p>
+<p>UNION和UNION ALL关键字都是将两个结果集合并为一个，不过UNION ALL不去重，返回所有行记录，UNION去重，会按照字段的顺序进行排序，然后去除重复的行记录，然后再返回</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; select * from student;<br>+----+-------+------+------+---------+<br>| id | stuno | name | age  | classId |<br>+----+-------+------+------+---------+<br>|  1 |     1 | 1    |    1 |       1 |<br>|  2 |     2 | 2    |    2 |       2 |<br>+----+-------+------+------+---------+<br>2 rows in set (0.00 sec)<br><br>mysql&gt; select * from student_copy;<br>+----+-------+------+------+---------+<br>| id | stuno | name | age  | classId |<br>+----+-------+------+------+---------+<br>|  1 |     1 | 1    |    1 |       1 |<br>|  2 |     2 | 2    |    2 |       2 |<br>+----+-------+------+------+---------+<br>2 rows in set (0.00 sec)<br><br>mysql&gt; select * from student union select * from student_copy;<br>+----+-------+------+------+---------+<br>| id | stuno | name | age  | classId |<br>+----+-------+------+------+---------+<br>|  1 |     1 | 1    |    1 |       1 |<br>|  2 |     2 | 2    |    2 |       2 |<br>+----+-------+------+------+---------+<br>2 rows in set (0.00 sec)<br><br>mysql&gt; select * from student union all select * from student_copy;<br>+----+-------+------+------+---------+<br>| id | stuno | name | age  | classId |<br>+----+-------+------+------+---------+<br>|  1 |     1 | 1    |    1 |       1 |<br>|  2 |     2 | 2    |    2 |       2 |<br>|  1 |     1 | 1    |    1 |       1 |<br>|  2 |     2 | 2    |    2 |       2 |<br>+----+-------+------+------+---------+<br>4 rows in set (0.00 sec)<br></code></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="SUBQUERY、DEPENDENT-SUBQUERY"><a href="#SUBQUERY、DEPENDENT-SUBQUERY" class="headerlink" title="SUBQUERY、DEPENDENT SUBQUERY"></a><font color='red'>SUBQUERY、DEPENDENT SUBQUERY</font></h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">EXPLAIN <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> s1 <span class="hljs-keyword">WHERE</span> key1 <span class="hljs-keyword">IN</span> (<span class="hljs-keyword">SELECT</span> key1 <span class="hljs-keyword">FROM</span> s2) <span class="hljs-keyword">OR</span> key3 <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;a&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>in后面的子查询<code>SELECT key1 FROM s2</code>是不相关子查询</p>
+<p><img src="/image/mysql/mysql29.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT key1 FROM s2 WHERE s1.key2 = s2.key2) OR key3 = &#x27;a&#x27;;<br></code></pre></td></tr></table></figure>
+
+<p>in后面的子查询是相关子查询</p>
+<p><img src="/image/mysql/mysql30.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<blockquote>
+<p>不相关子查询：子查询的不需要父查询把结果传进来</p>
+<p>相关子查询：子查询需要父表查询的某些结果才能执行</p>
+</blockquote>
+<ul>
+<li><font color='red'>DEPEDENT UNION、DEPEDENT SUBQUERY</font></li>
+</ul>
+<p>在UNION UNION ALL中如果内查询是相关子查询，就会</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT key1 FROM s2 WHERE key1 = &#x27;a&#x27; UNION SELECT key1 FROM s1 WHERE key1 = &#x27;b&#x27;);<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql31.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h4 id="DERIVED"><a href="#DERIVED" class="headerlink" title="DERIVED"></a><font color='red'>DERIVED</font></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; EXPLAIN SELECT * FROM (SELECT key1, count(*) as c FROM s1 GROUP BY key1) AS derived_s1 where c &gt; 1;<br></code></pre></td></tr></table></figure>
+
+<p>对派生表<code>SELECT key1, count(*) as c FROM s1 GROUP BY key1 </code>的查询，派生表对应的子查询type就是DERIVED</p>
+<p><img src="/image/mysql/mysql32.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h4 id="MATERIALIZED"><a href="#MATERIALIZED" class="headerlink" title="MATERIALIZED"></a><font color='red'>MATERIALIZED</font></h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">EXPLAIN <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> s1 <span class="hljs-keyword">WHERE</span> key1 <span class="hljs-keyword">IN</span> (<span class="hljs-keyword">SELECT</span> key1 <span class="hljs-keyword">FROM</span> s2);<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql33.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>查询优化器将子查询<code>SELECT key1 FROM s2</code>进行查询物化后与外层查询进行连接查询</p>
+<h3 id="④partitions"><a href="#④partitions" class="headerlink" title="④partitions"></a>④partitions</h3><p>分区</p>
+<h3 id="⑤type"><a href="#⑤type" class="headerlink" title="⑤type"></a><strong>⑤type</strong></h3><p>MySQL针对单表的执行查询的访问方法。完整的访问方法如下： <code>system ， const ， eq_ref ， ref ， fulltext ， ref_or_null ，index_merge ， unique_subquery ， index_subquery ， range ， index ， ALL</code>。</p>
+<h4 id="system"><a href="#system" class="headerlink" title="system"></a><font color='red'>system</font></h4><p>当表中只有一条记录并且这个表的存储引擎是MyIASM或者Memory，这时的type是system</p>
+<p><img src="/image/mysql/mysql34.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h4 id="const"><a href="#const" class="headerlink" title="const"></a><font color='red'>const</font></h4><p>主键primary key 或者<strong>唯一</strong>二级索引union index列与常数进行匹配时，对单标的访问方法就是const</p>
+<p><img src="/image/mysql/mysql35.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>这个表中id是主键</p>
+<h4 id="eg-ref"><a href="#eg-ref" class="headerlink" title="eg_ref"></a><font color='red'>eg_ref</font></h4><p>在连接查询中，如果被驱动表是通过主键或者唯一二级索引列等值匹配的方式进行访问，则对该被驱动表的访问方法是eg_ref</p>
+<p><img src="/image/mysql/mysql37.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>从执行计划中看出，s1为驱动表，s2为被驱动表，在访问s2表的时候是通过主键的等值匹配来访问的，所以这个表的执行方法为eg_ref</p>
+<blockquote>
+<p>join(inner join)、left join、right join的区别</p>
+<p><img src="/image/mysql/mysql36.png" srcset="/image/beautify/loading.gif" lazyload></p>
+</blockquote>
+<h4 id="ref、ref-or-null"><a href="#ref、ref-or-null" class="headerlink" title="ref、ref_or_null"></a><font color='red'>ref、ref_or_null</font></h4><p>当通过<strong>普通</strong>二级索引列与常量进行等值匹配来查询某个表，那对该表的访问方法就是ref</p>
+<p><img src="/image/mysql/mysql38.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>如果对普通二级索引进行等值匹配时，该列可以为null，则对该表的访问方法就是ref_or_null</p>
+<p><img src="/image/mysql/mysql39.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h4 id="index-merge"><a href="#index-merge" class="headerlink" title="index_merge"></a><font color='red'>index_merge</font></h4><p>当对两个普通二级索引进行等值匹配，且两个索引对应的列的连接方式为or，则对该表的访问方法就是index_merge</p>
+<p><img src="/image/mysql/mysql40.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h4 id="unique-subquery"><a href="#unique-subquery" class="headerlink" title="unique_subquery"></a><font color='red'>unique_subquery</font></h4><p>在一些包含in子查询的查询语句中，如果查询优化器决定将in子查询转化为exists子查询，而且子查询可以使用到主键进行等值匹配的话，那么该子查询的执行计划的type就是unique_subquery</p>
+<p><img src="/image/mysql/mysql41.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h4 id="range"><a href="#range" class="headerlink" title="range"></a><font color='red'>range</font></h4><p>使用索引获取某些范围区间的记录，就有可能使用到range访问方法</p>
+<p><img src="/image/mysql/mysql42.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<h4 id="index"><a href="#index" class="headerlink" title="index"></a><font color='red'>index</font></h4><p>使用覆盖索引，但需要扫描全部的索引记录时，该表的访问方法就是index</p>
+<p><img src="/image/mysql/mysql43.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<blockquote>
+<p>什么是<strong>覆盖索引？</strong></p>
+<p>一个索引包含了满足查询结果的数据就叫做覆盖索引，这个索引是联合索引&#x2F;二级索引，即<code>索引列+主键</code>包含select到FROM之间需要查询的列。</p>
+<p>假如现在有一个表t，它有3个列，c1，c2，c3，c4, 它有一个二级索引c2，主键索引c1，如果有一个语句是select * from t  where c2 &#x3D; 1;  会去二级索引中找，如果找到了一条行记录，就可以得到c2，c1的值，但是要返回的结果是全列，因此需要回表，找到聚簇索引中的行记录，将其返回。</p>
+<p>如果有一个语句是select c1,c2 from t  where c2 &#x3D; 1;  就可以直接在二级索引中找，找到就直接返回，因为在这个索引包含了满足查询结果的数据列，<strong>不需要回表的操作</strong>，这就是覆盖索引</p>
+<hr>
+<p>好处：</p>
+<p>1.避免InnoDB表进行索引的二次查询（回表）</p>
+<p>二级索引在叶子节点保存的是索引列和主键的行信息，在覆盖索引中，二级索引的键值中可以获取所要的数据，避免了对聚簇索引的二次查询</p>
+<p>2.可以把随机I&#x2F;O变成顺序I&#x2F;O，加快查询效率</p>
+<p>在二级索引中索引列是按顺序排的，但是回表的时候是根据主键值进行搜索的，不同的主键值他们不一定在一个页或者一个区中，因此要加载的页可能也是不同的，所以这是一个随机I&#x2F;O，而覆盖索引是按顺序读取页的，是一个顺序I&#x2F;O</p>
+</blockquote>
+<h4 id="ALL"><a href="#ALL" class="headerlink" title="ALL"></a><font color='red'>ALL</font></h4><p>全表扫描</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">EXPLAIN <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> s1;<br></code></pre></td></tr></table></figure>
+
+<p>结果值从最好到最坏依次是： <code>system &gt; const &gt; eq_ref &gt; ref</code> &gt; fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; <code>range &gt; index &gt; ALL</code></p>
+<h3 id="⑥possible-keys和key"><a href="#⑥possible-keys和key" class="headerlink" title="⑥possible_keys和key"></a><strong>⑥possible_keys和key</strong></h3><p>possible_keys表示在某个查询语句中，对某个表执行单标查询时可能用到的索引有哪些，但不一定真正被查询使用，key列表示实际用到的索引有哪些，如果为NULL则没有使用索引。</p>
+<h3 id="⑦key-len"><a href="#⑦key-len" class="headerlink" title="⑦key_len"></a><strong>⑦key_len</strong></h3><p>实际使用到的索引长度(即 字节数)</p>
+<p>帮你检查是否充分的利用上了索引，值越大越好，主要针对联合索引。</p>
+<ul>
+<li>varchar(10)变长字段且允许NULL &#x3D; 10 * ( character set：utf8&#x3D;3,gbk&#x3D;2,latin1&#x3D;1)+1(NULL)+2(变长字段)</li>
+<li>varchar(10)变长字段且不允许NULL。长度&#x3D; 10 * ( character set：utf8&#x3D;3,gbk&#x3D;2,latin1&#x3D;1)+2(变长字段)</li>
+<li>char(10)固定字段且允许NULL。长度&#x3D; 10 * ( character set：utf8&#x3D;3,gbk&#x3D;2,latin1&#x3D;1)+1(NULL)</li>
+<li>char(10)固定字段且不允许NULL。长度&#x3D; 10 * ( character set：utf8&#x3D;3,gbk&#x3D;2,latin1&#x3D;1)</li>
+<li>int且不允许为NULL。长度&#x3D;4</li>
+<li>int且允许为NULL。长度&#x3D;5</li>
+</ul>
+<h3 id="⑧ref"><a href="#⑧ref" class="headerlink" title="⑧ref"></a><strong>⑧ref</strong></h3><p>当使用索引列等值查询时，与索引列进行等值匹配的对象信息。</p>
+<h3 id="⑨rows"><a href="#⑨rows" class="headerlink" title="⑨rows"></a><strong>⑨rows</strong></h3><p>预估的需要读取的记录数，越小说明获取的记录越可能在同一页中，进行I&#x2F;O的次数就越少，效率就越高。</p>
+<h3 id="⑩filtered"><a href="#⑩filtered" class="headerlink" title="⑩filtered"></a><strong>⑩filtered</strong></h3><p>某个表经过where搜索条件过滤后剩余记录条数的百分比</p>
+<h3 id="⑪Extra"><a href="#⑪Extra" class="headerlink" title="⑪Extra"></a><strong>⑪Extra</strong></h3><p>用来说明一些额外信息。比如有：</p>
+<h4 id="No-tables-used"><a href="#No-tables-used" class="headerlink" title="No tables used"></a><font color='red'>No tables used</font></h4><p>当查询语句中没有FROM子句时会提示这个信息</p>
+<p><code>EXPLAIN SELECT 1;</code></p>
+<h4 id="Impossible-WHERE"><a href="#Impossible-WHERE" class="headerlink" title="Impossible WHERE"></a><font color='red'>Impossible WHERE</font></h4><p>查询语句中的WHERE子句永远为FALSE时</p>
+<p><code>EXPLAIN SELECT * FROM s1 WHERE 1 != 1;</code></p>
+<h4 id="Using-where"><a href="#Using-where" class="headerlink" title="Using where"></a><font color='red'>Using where</font></h4><p>当全表扫描来对某个表进行查询时，并且该语句有WHERE，where子句中查询的列中有不是索引的列</p>
+<p><code> EXPLAIN SELECT * FROM s1 WHERE common_field = &#39;a&#39;;</code></p>
+<p><code>mysql&gt; EXPLAIN SELECT * FROM s1 WHERE key1 = &#39;a&#39; AND common_field = &#39;a&#39;;</code></p>
+<p> EXPLAIN SELECT * FROM s1 WHERE key1 &#x3D; ‘a’   &#x2F;&#x2F;key1是主键，仅仅是这个不会有Using where</p>
+<h4 id="Using-index"><a href="#Using-index" class="headerlink" title="Using index"></a><font color='red'>Using index</font></h4><p>即<strong>覆盖索引</strong>，当我们查询列表以及搜索条件中只包含属于某个索引的列，在使用覆盖索引时在Extra列会提示这个额外信息，不需要回表了</p>
+<p><code>mysql&gt; EXPLAIN SELECT key1 FROM s1 WHERE key1 = &#39;a&#39;;</code></p>
+<h4 id="Using-index-condition"><a href="#Using-index-condition" class="headerlink" title="Using index condition"></a><font color='red'>Using index condition</font></h4><p><code>mysql&gt; EXPLAIN SELECT * FROM s1 WHERE key1 &gt; &#39;z&#39; AND key1 LIKE &#39;%b&#39;;</code></p>
+<p><img src="/image/mysql/mysql44.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>即<strong>索引下推</strong></p>
+<blockquote>
+<p>索引条件下推（ICP，Index Condition Pushdown），是一种在存储引擎层使用索引过滤数据的优化方式。更多针对联合索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">//现在tuser中只有一个联合索引idx_age_name_address(age,name,address)，一个主键索引id<br>SELECT * FROM tuser<br>WHERE age = 10 <br>AND NAME LIKE &#x27;%张%&#x27;<br>AND ismale = 1;<br></code></pre></td></tr></table></figure>
+
+<p>此时用了联合索引，但仅仅是age列，因为name是模糊的，索引失效，当查询时，会首先去联合索引的B+树中查找age，查到多条行记录后，会接着筛选这几条记录中符合name like ‘%张%’条件的记录，然后将得到的记录对应的主键值进行回表，寻找匹配记录。这就是ICP<br>—如果没有ICP，应该是在查询时，根据联合索引，如果查询到多条记录，会直接回表，然后在主键索引的满足这些id的记录中查找符合name like ‘%张%’和ismale &#x3D; 1的记录，相当于回表需要的I&#x2F;O次数很可能比ICP的多，因为回表的记录数多。</p>
+<p>ICP的 <code>加速效果</code> 取决于在存储引擎内通过 <code>ICP筛选</code> 掉的数据的比例。</p>
+<p>默认情况下ICP是打开的，也可以通过SQL命令打开或关闭</p>
+</blockquote>
+<h4 id="Using-filesort"><a href="#Using-filesort" class="headerlink" title="Using filesort"></a>Using filesort</h4><p><code>mysql&gt; EXPLAIN SELECT * FROM s1 ORDER BY common_field LIMIT 10;</code></p>
+<p>当排序操作ORDER BY无法使用到索引，只能在内存中或者磁盘中进行排序，Mysql把这种在内存中或者磁盘中进行排序的方式称为文件排序(filesort)，非常耗费性能，最好想办法将使用文件排序的执行方式改为使用索引进行排序，Extra&#x3D;Using filesort</p>
+<p><code>mysql&gt; EXPLAIN SELECT * FROM s1 ORDER BY key1 LIMIT 10;</code></p>
+<p>由于在key1上有索引idx_key1，所以这个语句可以使用idx_key1索引直接取出key1的10条数据，然后再进行回表。此时显示的Extra&#x3D;NULL</p>
+<h2 id="3-2-EXPLAIN的四种输出格式"><a href="#3-2-EXPLAIN的四种输出格式" class="headerlink" title="3.2 EXPLAIN的四种输出格式"></a>3.2 EXPLAIN的四种输出格式</h2><ol>
+<li><p>传统格式</p>
+<p>explain select * from s1 order by key1 limit 10;</p>
+<p>输出格式就是上面一直看到的那种表格</p>
+</li>
+<li><p>json格式</p>
+<p>explain format&#x3D;json select * from s1 order by key1 limit 10;</p>
+<p>输出格式是json，比传统格式的信息更全面，包括查询成本</p>
+</li>
+<li><p>Tree格式</p>
+<p>explain format&#x3D;tree select * from s1 order by key1 limit 10;</p>
+<p>展示层次结构</p>
+</li>
+<li><p>可视化输出</p>
+<p>使用MySQL Workbench可视化查看MySQL的执行计划</p>
+</li>
+</ol>
+<h1 id="4-索引优化和查询优化"><a href="#4-索引优化和查询优化" class="headerlink" title="4.索引优化和查询优化"></a>4.索引优化和查询优化</h1><h2 id="4-1-索引失效的例子"><a href="#4-1-索引失效的例子" class="headerlink" title="4.1 索引失效的例子"></a>4.1 索引失效的例子</h2><ol>
+<li><p>不符合最佳左前缀法则</p>
+<p>索引文件具有 B-Tree 的最左前缀匹配特性，如果左边的值未确定，那么无法使用此索引。</p>
+</li>
+<li><p>计算、函数、类型转换(自动或手动)导致索引失效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs mysql"># 函数<br>EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE LEFT(student.name,3) = &#x27;abc&#x27;;<br># 计算<br>CREATE INDEX idx_sno ON student(stuno);<br>EXPLAIN SELECT SQL_NO_CACHE id, stuno, NAME FROM student WHERE stuno+1 = 900001;<br># 假设name字段上设置有索引,但是由于类型转换，未使用到索引<br>EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE name=123;#隐式的类型转换<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>范围条件右边的列索引失效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs mysql">ALTER TABLE student DROP INDEX idx_name;<br>ALTER TABLE student DROP INDEX idx_age;<br>ALTER TABLE student DROP INDEX idx_age_classid;<br>EXPLAIN SELECT SQL_NO_CACHE * FROM student<br>WHERE student.age=30 AND student.classId&gt;20 AND student.name = &#x27;abc&#x27; ;<br># student.classId&gt;20的右侧的student.name = &#x27;abc&#x27;的索引就会失效<br>create index idx_age_name_classid on student(age,name,classid);<br>EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.age=30 AND student.name = &#x27;abc&#x27; AND student.classId&gt;20 ;<br>#直接交换sql语句的位置是没有用的，需要改变联合索引的位置<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>不等于(!&#x3D; 或者&lt;&gt;)索引失效</p>
+<p>当sql语句中有!&#x3D;或者&lt;&gt;会出现索引失效的问题，尝试改写为<code>等于</code>，或采用<code>覆盖索引</code></p>
+</li>
+<li><p>is null可以使用索引，is not null无法使用索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age IS NULL;<br>EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age IS NOT NULL;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/mysql/mysql47.png" srcset="/image/beautify/loading.gif" lazyload></p>
+</li>
+<li><p>like以通配符%开头索引失效</p>
+</li>
+</ol>
+<p><img src="/image/mysql/mysql46.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>【强制】页面搜索严禁<code>左模糊</code>或者<code>全模糊</code>，如果需要请走搜索引擎来解决。</p>
+<ol start="7">
+<li><p>OR 前后存在非索引的列，索引失效</p>
+<p>让<code>OR的前后条件</code>都具备索引，如果缺少一个就会出现索引失效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql"># age是二级索引，classid是普通列，未使用到age索引<br>EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 10 OR classid = 100;<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="4-2-外连接和内连接的查询优化"><a href="#4-2-外连接和内连接的查询优化" class="headerlink" title="4.2 外连接和内连接的查询优化"></a>4.2 外连接和内连接的查询优化</h2><p>驱动表是主表，被驱动表是从表</p>
+<h3 id="4-2-1-外连接"><a href="#4-2-1-外连接" class="headerlink" title="4.2.1 外连接"></a>4.2.1 外连接</h3><p>刚开始所有字段都没有加索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">EXPLAIN SELECT SQL_NO_CACHE * FROM name LEFT JOIN book ON type.card = book.card;<br></code></pre></td></tr></table></figure>
+
+<p>left join 的执行过程是先在type表中取一个行，然后匹配所有的book表中的数据，看哪一行数据符合name.card &#x3D; book.card; 假如type表中有20行数据，book表中有30行数据，则一共要查询20*30&#x3D;600次。name是驱动表，book是被驱动表。</p>
+<p>结果是：两行表格的type都为ALL，全表扫描，没有使用任何索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">ALTER TABLE book ADD INDEX Y ( card);  #【被驱动表】，可以避免全表扫描<br>EXPLAIN SELECT SQL_NO_CACHE * FROM name LEFT JOIN book ON type.card = book.card;<br></code></pre></td></tr></table></figure>
+
+<p>结果是：book表对应的那一行的type属性的值是ref，使用上了二级索引，这样当驱动表选定一行数据时，可以直接从被驱动表的B+树上直接定位到目标值(logn级别)，但是驱动表无法避免全表扫描(加索引和不加索引都是)</p>
+<p>对于外连接，name也不一定都是驱动表，因为查询优化器会将语句优化为内连接，所以谁作为驱动表不一定。</p>
+<h3 id="4-2-2-内连接"><a href="#4-2-2-内连接" class="headerlink" title="4.2.2 内连接"></a>4.2.2 内连接</h3><p> inner join（<code>MySQL的查询优化器可以决定谁作为驱动表和被驱动表</code>）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">EXPLAIN  SELECT SQL_NO_CACHE * FROM type INNER JOIN book ON type.card=book.card; <br></code></pre></td></tr></table></figure>
+
+<p>如果name表上的card有索引，而book表上的card没有，则name是被驱动表</p>
+<p>如果book表上的card有索引，而name表上的card没有，则book是被驱动表</p>
+<p>如果都有索引，则MySQL会评判选择哪个表作为驱动表效率更高，就选择哪个表</p>
+<p>如果都没有索引，则小表驱动大表。（小的结果集驱动大的结果集，经过where条件筛选出来的结果集哪一个小，哪一个表就是小表。即两个表按照各自的条件过滤，过滤完成之后，计算参与join的各个字段的总数据量，数据量小的那个表，就是“小表”。）</p>
+<p>查询优化器优化后的explain的结果中，上面的是驱动表，下面是被驱动表</p>
+<h3 id="4-2-3-JOIN原理"><a href="#4-2-3-JOIN原理" class="headerlink" title="4.2.3 JOIN原理"></a>4.2.3 JOIN原理</h3><ol>
+<li>索引嵌套循环连接(Index  Nested-Loop Join)</li>
+</ol>
+<p>假如：驱动表是t1，被驱动表是t2，被驱动表t2的字段a上有索引，join过程用上了这个索引，则inner join的执行过程是：</p>
+<ol>
+<li>从表t1中读入一行数据 R；</li>
+<li>从数据行R中，取出a字段到表t2里去查找；</li>
+<li>取出表t2中满足条件的行，跟R组成一行，作为结果集的一部分；</li>
+<li>重复执行步骤1到3，直到表t1的末尾循环结束。</li>
+</ol>
+<p><img src="/image/mysql/mysql48.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<blockquote>
+<p>图片来源：<a target="_blank" rel="noopener" href="https://achang.blog.csdn.net/article/details/122655136">https://achang.blog.csdn.net/article/details/122655136</a></p>
+</blockquote>
+<ol start="2">
+<li>块嵌套循环连接(Blocked Nested-Loop join)</li>
+</ol>
+<p>不再是逐条获取驱动表的数据，而是一块一块的获取，引用了join buffer缓冲区，将驱动表join相关的部分数据列缓存到join buffer中，被驱动表中的记录一次性和缓冲区中的比较，降低了被驱动表的访问频率</p>
+<p><img src="/image/mysql/mysql49.png" srcset="/image/beautify/loading.gif" lazyload></p>
+<p>这是没有索引的情况</p>
+<p>效率：索引嵌套循环连接 &gt; 块嵌套循环连接</p>
+<h2 id="4-3-子查询优化"><a href="#4-3-子查询优化" class="headerlink" title="4.3 子查询优化"></a>4.3 子查询优化</h2><p>子查询效率比较低，因为查询优化器需要创建一个临时表，帮助筛选，结束后会再撤销临时表，比较消耗性能，最好将子查询改为join连接多表查询，这样不用建立临时表。</p>
+<p>尽量不要使用NOT IN 或者 NOT EXISTS，用LEFT JOIN xxx ON xx WHERE xx IS NULL替代</p>
+<h2 id="4-4-排序优化"><a href="#4-4-排序优化" class="headerlink" title="4.4 排序优化"></a>4.4 排序优化</h2><p>SQL中，在WHERE子句中最好使用索引，避免全表扫描，在ORDER BY 子句中最好使用索引，避免Filesort排序。</p>
+<p>尽量使用 Index 完成 ORDER BY 排序。如果 WHERE 和 ORDER BY 后面是相同的列就使用单索引列；如果不同就使用联合索引。</p>
+<blockquote>
+<p><strong>MySQL中支持两种排序，FileSort和Index</strong></p>
+<p>Index排序中，索引可以保证数据的有序性，不需要再进行排序，效率更高。</p>
+<p>FileSort排序则一般在内存或磁盘中进行排序，占用CPU较多，如果待排序结果较大，会产生临时文件I&#x2F;O到磁盘进行排序的情况，效率较低。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">mysql&gt; EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 30 AND stuno &lt;101000 ORDER BY NAME;<br>#为了去掉filesort我们可以把索引建成<br>CREATE INDEX idx_age_name ON student(age,NAME);<br></code></pre></td></tr></table></figure>
+
+<p>如果既有where 又有order by，可能是先过滤where中的条件，然后再进行order by，如果过滤完记录就不太多了，可能不会使用这个order by的索引，也可能是先进行order by，再where，这完全是根据查询优化器的决定。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/MySQL/" class="category-chain-item">MySQL</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E9%AB%98%E7%BA%A7/" class="print-no-link">#数据库高级</a>
+      
+        <a href="/tags/EXPLAIN/" class="print-no-link">#EXPLAIN</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>MySQL-数据库调优</div>
+      <div>https://vickkkyz.fun/2022/04/07/计算机/mysql/数据库调化/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Vickkkyz</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年4月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/InnoDB%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/" title="MySQL-InnoDB中数据存储结构(页)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">MySQL-InnoDB中数据存储结构(页)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA/mysql/%E4%BA%8B%E5%8A%A1/" title="MySQL-事务">
+                        <span class="hidden-mobile">MySQL-事务</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+<!-- Load TweenLite --> <script src="https://cdn.jsdelivr.net/npm/greensock@1.20.2/dist/TweenLite.js"></script>
+<!-- Copyrighted cubism SDK --> <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script> <!-- Load Pixi (dependency for cubism 2/4 integrated loader) --> <script src="https://cdn.jsdelivr.net/npm/pixi.js@5.3.6/dist/pixi.min.js"></script> <!-- Load cubism 4 integrated loader --> <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.3.1/dist/cubism4.min.js"></script>
+<!-- Load pio and alternative loader --> <link href="https://cdn.jsdelivr.net/gh/vickkkyz/vickkkyz.github.io@2.0/css/pio.css" rel="stylesheet" type="text/css"/> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/pio_sdk4.js"></script> <script src="https://cdn.jsdelivr.net/gh/journey-ad/blog-img@76ba2b3/live2d/lib/load.js"></script>
+<!-- 页脚添加网站运行时间 --> <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <a href="https://icp.gov.moe/?keyword=20249336" target="_blank">萌ICP备20249336号</a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/backgroundize.js"></script><!-- hexo injector body_end end --></body>
+</html>
