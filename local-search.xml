@@ -543,9 +543,9 @@
     
     <tags>
       
-      <tag>问题</tag>
-      
       <tag>java</tag>
+      
+      <tag>问题</tag>
       
     </tags>
     
@@ -663,9 +663,9 @@
       
       <tag>Linux</tag>
       
-      <tag>MVCC</tag>
-      
       <tag>数据库高级</tag>
+      
+      <tag>MVCC</tag>
       
     </tags>
     
@@ -692,11 +692,11 @@
       
       <tag>Linux</tag>
       
-      <tag>数据库高级</tag>
-      
       <tag>行格式</tag>
       
       <tag>页格式</tag>
+      
+      <tag>数据库高级</tag>
       
     </tags>
     
@@ -1084,9 +1084,9 @@
       
       <tag>总结</tag>
       
-      <tag>jvm</tag>
-      
       <tag>java内存区域</tag>
+      
+      <tag>jvm</tag>
       
     </tags>
     
@@ -1142,9 +1142,9 @@
       
       <tag>总结</tag>
       
-      <tag>class文件</tag>
-      
       <tag>jvm</tag>
+      
+      <tag>class文件</tag>
       
     </tags>
     
@@ -1171,9 +1171,9 @@
       
       <tag>总结</tag>
       
-      <tag>class文件</tag>
-      
       <tag>jvm</tag>
+      
+      <tag>class文件</tag>
       
       <tag>类加载器</tag>
       
