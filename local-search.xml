@@ -1113,9 +1113,9 @@
       
       <tag>总结</tag>
       
-      <tag>垃圾收集器</tag>
-      
       <tag>jvm</tag>
+      
+      <tag>垃圾收集器</tag>
       
     </tags>
     
@@ -1142,9 +1142,9 @@
       
       <tag>总结</tag>
       
-      <tag>jvm</tag>
-      
       <tag>class文件</tag>
+      
+      <tag>jvm</tag>
       
     </tags>
     
@@ -1171,9 +1171,9 @@
       
       <tag>总结</tag>
       
-      <tag>jvm</tag>
-      
       <tag>class文件</tag>
+      
+      <tag>jvm</tag>
       
       <tag>类加载器</tag>
       
